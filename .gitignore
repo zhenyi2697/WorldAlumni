@@ -1,0 +1,14 @@
+*.log
+*.pot
+*.pyc
+
+admin/
+grappelli/
+media/
+
+.idea/
+
+migrations/
+
+settings_production.py
+
