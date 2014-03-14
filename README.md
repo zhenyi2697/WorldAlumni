@@ -4,6 +4,24 @@
 
 WorldAlumni depends on the following packages:
 
+1.MySQL:
+
+Install MySQL from official site, or use homebrew:
+
+	$ brew install mysql
+	
+Install MySQLWorkbench from official site for easier management.
+
+2.Python packages:
+
+[Django](https://www.djangoproject.com/): Framework
+	
+	$ pip install django
+	
+[MySQLdb](http://mysql-python.sourceforge.net/): Python interface for MySQL
+
+	$ pip install mysql-python
+
 [Django Grappelli](https://pypi.python.org/pypi/django-grappelli):
 
 	$ sudo pip install django-grappelli
