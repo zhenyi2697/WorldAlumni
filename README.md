@@ -6,7 +6,7 @@ WorldAlumni depends on the following packages:
 
 [Django Grappelli](https://pypi.python.org/pypi/django-grappelli):
 
-	$ sudo pip install django-grappelli==2.4.8
+	$ sudo pip install django-grappelli
 	
 [Django south](http://south.readthedocs.org/en/latest/):
 Since Django does not provide schema migration, to avoid manully modify the database schema, we use Django-south to automize this process.
