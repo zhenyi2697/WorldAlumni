@@ -13,7 +13,7 @@ admin.site.register(Location)
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'WorldAlumni.views.home', name='home'),
+    url(r'^$', 'backend.views.home', name='static_home'),
     # url(r'^WorldAlumni/', include('WorldAlumni.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
