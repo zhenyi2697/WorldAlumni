@@ -1,8 +1,15 @@
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
+import backend
+from backend.models import *
+
 from django.contrib import admin
 admin.autodiscover()
+admin.site.register(Binding)
+admin.site.register(Profile)
+admin.site.register(School)
+admin.site.register(Attendance)
+admin.site.register(Location)
 
 urlpatterns = patterns('',
     # Examples:
@@ -14,4 +21,5 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    (r'^grappelli/', include('grappelli.urls')), # grappelli URLS
 )
