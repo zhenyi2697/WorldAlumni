@@ -135,8 +135,8 @@ INSTALLED_APPS = (
     'grappelli',
     'django.contrib.admin',
     'mainsite',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'backend',
+    #'polls',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
