@@ -1,23 +1,27 @@
 # WorldAlumni - Find your schoolmates
 
-## Package Dependency
+## Lastest changes
+
+03/15/2014: updated models for backend   
+
+## Project Setup
 
 WorldAlumni depends on the following packages:
 
 1.MySQL:
 
-Install MySQL from official site, or use homebrew:
+Install MySQL from official site, or use homebrew (For Mac OS only):
 
 	$ brew install mysql
-	
+
 Install MySQLWorkbench from official site for easier management.
 
 2.Python packages:
 
 [Django](https://www.djangoproject.com/): Framework
-	
+
 	$ pip install django
-	
+
 [MySQLdb](http://mysql-python.sourceforge.net/): Python interface for MySQL
 
 	$ pip install mysql-python
@@ -25,13 +29,13 @@ Install MySQLWorkbench from official site for easier management.
 [Django Grappelli](https://pypi.python.org/pypi/django-grappelli):
 
 	$ sudo pip install django-grappelli
-	
+
 [Django south](http://south.readthedocs.org/en/latest/):
 Since Django does not provide schema migration, to avoid manully modify the database schema, we use Django-south to automize this process.
 
 	$ sudo pip install south
-	
-	
+
+
 ## Configure and sync database
 
 Configure your WorldAlumni/settings.py to connect to your local mysql database:
