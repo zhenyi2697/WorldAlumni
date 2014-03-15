@@ -19,7 +19,7 @@ class School(models.Model):
 
 class Binding(models.Model):
 
-    bind_form = models.CharField(max_length=32)
+    bind_from = models.CharField(max_length=32)
     access_token = models.CharField(max_length=256)
     refresh_token = models.CharField(max_length=256)
     expire_time = models.DateTimeField()
