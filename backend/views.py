@@ -15,8 +15,10 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
+
 def home(request):
     ''' home page for website'''
 
     return render(request, 'home.html', {})
+
 

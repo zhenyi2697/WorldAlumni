@@ -14,6 +14,7 @@ admin.site.register(Location)
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'backend.views.home', name='static_home'),
+    #url(r'^loggedin/', 'backend.views.loggedin', name='loggedin'),
     # url(r'^WorldAlumni/', include('WorldAlumni.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -21,5 +22,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    (r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+    url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+    
+    url('', include('social.apps.django_app.urls', namespace='social'))
 )

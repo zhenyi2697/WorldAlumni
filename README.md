@@ -74,6 +74,14 @@ More details following this post: [http://stackoverflow.com/questions/3090648/dj
 
 [Setup Django and Mysql-Python on Mac OS Lion](http://decoding.wordpress.com/2012/01/23/how-to-setup-django-and-mysql-python-on-mac-os-x-lion/)
 
+## Connect to social networks
+
+We use [Python Social Authentication](http://psa.matiasaguirre.net/docs/index.html) for accesing user profile information.
+
+Apply for a Facebook application and a LinkedIn one. The domain of the app is registered at http://worldalumni.io:8000/ during the developement. Change /etc/hosts to add this hostname to 127.0.0.1 to direct local visits.
+
+Now: logging in for both networks is fine, but no information retrievement is not implemented. Integration with server db is not clear.
+To do: grasp auth procedure and implement views and templates logically. Examples available on psa github page. 'User' concept in Django.
 
 
 

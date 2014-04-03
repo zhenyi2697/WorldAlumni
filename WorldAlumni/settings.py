@@ -135,12 +135,40 @@ INSTALLED_APPS = (
     'grappelli',
     'django.contrib.admin',
     'backend',
-    #'south'
+    'south',
+    'social.apps.django_app.default',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+'''
+Setting up for social auth:
+Include auth provider backends.
+Provide app key.
+Allocate redirect URL.
+'''
+AUTHENTICATION_BACKENDS = (
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.linkedin.LinkedinOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_FACEBOOK_KEY = '734178419946239'
+SOCIAL_AUTH_FACEBOOK_SECRET = '5571a159a3bf49579f5d64e7cc15b04b'
+
+SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '75x734l3w3d01o'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'hIVmjmq31A54CAiK'
+
+#SOCIAL_AUTH_USER_MODEL = 'backend.models.User'
+
+SOCIAL_AUTH_LOGIN_URL          = '/login-url/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/logged-in/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
+SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
+
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -180,4 +208,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
+
+ 
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
 )
