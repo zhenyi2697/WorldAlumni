@@ -137,10 +137,7 @@ INSTALLED_APPS = (
     'backend',
     'south',
     'social.apps.django_app.default',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admin',
 )
 
 '''
@@ -157,18 +154,33 @@ AUTHENTICATION_BACKENDS = (
 
 SOCIAL_AUTH_FACEBOOK_KEY = '734178419946239'
 SOCIAL_AUTH_FACEBOOK_SECRET = '5571a159a3bf49579f5d64e7cc15b04b'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_education_history', 'user_work_history']
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '75x734l3w3d01o'
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'hIVmjmq31A54CAiK'
+# Add email to requested authorizations.
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress', 'r_fullprofile']
+SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['email-address', 'headline', 'industry', 'educations']
 
 #SOCIAL_AUTH_USER_MODEL = 'backend.models.User'
 
-SOCIAL_AUTH_LOGIN_URL          = '/login-url/'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/logged-in/'
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
+SOCIAL_AUTH_LOGIN_URL          = '/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
-
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'backend.pipeline.user_details'
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

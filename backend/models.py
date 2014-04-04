@@ -8,7 +8,7 @@ from django.conf import settings
 class School(models.Model):
 
     name = models.CharField(max_length=256)
-    school_type = models.SmallIntegerField()
+    sid = models.CharField(max_length=64, null=True, blank=True)
 
     class Meta:
         verbose_name = 'School'
@@ -20,9 +20,6 @@ class School(models.Model):
 class Binding(models.Model):
 
     bind_from = models.CharField(max_length=32)
-    access_token = models.CharField(max_length=256)
-    refresh_token = models.CharField(max_length=256)
-    expire_time = models.DateTimeField()
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True, auto_now_add=True)
 
@@ -39,14 +36,12 @@ class Binding(models.Model):
         verbose_name_plural = 'Bindings'
 
     def __unicode__(self):
-        return unicode(self.user)
+        return unicode(self.id) + u' ' + self.user.username
 
 class Profile(models.Model):
 
-    name = models.CharField(max_length=128)
-    email = models.EmailField(max_length=256)
-    gender = models.SmallIntegerField()
-    image_url = models.URLField()
+    gender = models.CharField(max_length=20,blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True)
 
     ### Foreign keys
     binding = models.ForeignKey(Binding)
@@ -56,21 +51,22 @@ class Profile(models.Model):
         verbose_name_plural = 'Profiles'
 
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.binding.user.username)
 
 class Attendance(models.Model):
 
     binding = models.ForeignKey(Binding)
     school = models.ForeignKey(School)
-    attend_year = models.IntegerField()
-    finish_year = models.IntegerField()
+    type = models.CharField(max_length=64, blank=True, null=True)
+    attend_year = models.CharField(max_length=16, blank=True, null=True)
+    finish_year = models.CharField(max_length=16, blank=True, null=True)
 
     class Meta:
         db_table='backend_binding_schools'
         unique_together = (('binding', 'school'))
 
     def __unicode__(self):
-        return u'School %s for user %s' % self.school.name, self.profile.name
+        return u'School for user'
 
 class Location(models.Model):
 

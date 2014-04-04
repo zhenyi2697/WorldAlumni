@@ -83,5 +83,9 @@ Apply for a Facebook application and a LinkedIn one. The domain of the app is re
 Now: logging in for both networks is fine, but no information retrievement is not implemented. Integration with server db is not clear.
 To do: grasp auth procedure and implement views and templates logically. Examples available on psa github page. 'User' concept in Django.
 
+**Should change /etc/hosts and added this following entry into it **
+
+    127.0.0.1 worldalumni.io
+
 
 

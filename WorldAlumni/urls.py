@@ -5,11 +5,6 @@ from backend.models import *
 
 from django.contrib import admin
 admin.autodiscover()
-admin.site.register(Binding)
-admin.site.register(Profile)
-admin.site.register(School)
-admin.site.register(Attendance)
-admin.site.register(Location)
 
 urlpatterns = patterns('',
     # Examples:
