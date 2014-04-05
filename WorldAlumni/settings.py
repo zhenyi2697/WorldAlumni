@@ -135,9 +135,11 @@ INSTALLED_APPS = (
     'grappelli',
     'django.contrib.admin',
     'backend',
+    'api',
     'south',
     'social.apps.django_app.default',
     'django.contrib.admin',
+    'rest_framework',
 )
 
 '''
@@ -181,6 +183,29 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details',
     'backend.pipeline.user_details'
 )
+
+## Rest Framework
+REST_FRAMEWORK = {
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer',
+
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+
+    'DEFAULT_RENDERER_CLASSES': [],
+    # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'PAGINATE_BY': 10
+}
+
+if DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    )
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

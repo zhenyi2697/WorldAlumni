@@ -18,6 +18,11 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
-    
-    url('', include('social.apps.django_app.urls', namespace='social'))
+
+    ### social auth
+    url('', include('social.apps.django_app.urls', namespace='social')),
+
+    ### Rest framework browsable api list
+    url(r'', include('api.urls')),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 )

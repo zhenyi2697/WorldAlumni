@@ -35,6 +35,12 @@ Since Django does not provide schema migration, to avoid manully modify the data
 
 	$ sudo pip install south
 
+[Django Rest Framework](http://www.django-rest-framework.org/):   
+We use djangoRestFramework to develop our rest apis
+
+    $ sudo pip install djangorestframework
+    $ sudo pip install markdown
+    $ sudo pip install django-filter
 
 ## Configure and sync database
 
