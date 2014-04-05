@@ -39,6 +39,24 @@ class JSONResponse(HttpResponse):
             # return JSONResponse(serializer.data, status=status.HTTP_201_CREATED)
         # return JSONResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+from social.apps.django_app.utils import strategy
+
+@strategy()
+def auth_by_token(request, backend):
+    backend = request.strategy.backend
+
+    try:
+        user = backend.do_auth(
+            access_token=request.POST.get('access_token', '').strip()
+            )
+    except Exception as err:
+        print err
+        user = None
+
+    if user and user.is_active:
+        return user# Return anything that makes sense here
+    else:
+        return None
 
 @csrf_exempt
 def check_binding(request):
@@ -48,6 +66,9 @@ def check_binding(request):
     if request.method == 'POST':
         uid = request.POST.get('uid', '').strip()
         provider = request.POST.get('provider', '').strip()
+        access_token = request.POST.get('access_token', '').strip()
+        print "access_token is :"
+        print access_token
 
         auths = UserSocialAuth.objects.filter(uid=uid, provider=provider)
 
@@ -55,7 +76,12 @@ def check_binding(request):
             user_social_auth = auths[0]
             bindings = Binding.objects.filter(user=user_social_auth.user)
         else:
-            bindings = []
+            user = auth_by_token(request, provider)
+            print user
+            # if user:
+                # strategy = load_strategy(request=request, backend=backend)
+                # _do_login(strategy, user)
+            bindings = Binding.objects.filter(user=user)
 
         serializer = BindingSerializer(bindings, many=True)
         return JSONResponse(serializer.data)

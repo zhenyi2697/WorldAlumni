@@ -49,8 +49,6 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                 sid = s['school']['id']
                 schools_by_id = School.objects.filter(sid=sid)
                 schools_by_name = School.objects.filter(name=name)
-                print schools_by_id
-                print schools_by_name
                 if schools_by_id.count() == 0 and schools_by_name.count() == 0:
                     school = School(
                                 name=name,
