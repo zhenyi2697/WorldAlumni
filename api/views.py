@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -9,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from social_auth.models import UserSocialAuth
 
 from backend.models import *
-from api.serializers import BindingSerializer
+from api.serializers import *
 
 class JSONResponse(HttpResponse):
     """
@@ -20,27 +22,8 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
-# @csrf_exempt
-# def binding_list(request, format=None):
-    # """
-    # List all bindins, or create a new snippet.
-    # """
-    # if request.method == 'GET':
-        # bindings = Binding.objects.all()
-        # serializer = BindingSerializer(bindings, many=True)
-        # print serializer.data
-        # return JSONResponse(serializer.data)
-
-    # elif request.method == 'POST':
-        # data = JSONParser().parse(request)
-        # serializer = BindingSerializer(data=data)
-        # if serializer.is_valid():
-            # serializer.save()
-            # return JSONResponse(serializer.data, status=status.HTTP_201_CREATED)
-        # return JSONResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 from social.apps.django_app.utils import strategy
-
 @strategy()
 def auth_by_token(request, backend):
     backend = request.strategy.backend
@@ -57,6 +40,7 @@ def auth_by_token(request, backend):
         return user# Return anything that makes sense here
     else:
         return None
+
 
 @csrf_exempt
 def check_binding(request):
@@ -84,30 +68,54 @@ def check_binding(request):
             bindings = Binding.objects.filter(user=user)
 
         serializer = BindingSerializer(bindings, many=True)
+        print serializer.data
         return JSONResponse(serializer.data)
 
-# @csrf_exempt
-# def binding_detail(request, pk):
-    # """
-    # Retrieve, update or delete a code snippet.
-    # """
-    # try:
-        # binding = Binding.objects.get(pk=pk)
-    # except Binding.DoesNotExist:
-        # return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    # if request.method == 'GET':
-        # serializer = BindingSerializer(binding)
-        # return JSONResponse(serializer.data)
+@csrf_exempt
+def post_location(request):
+    '''
+    Add a new user location entry
+    '''
 
-    # elif request.method == 'PUT':
-        # serializer = BindingSerializer(snippet, data=request.DATA)
-        # if serializer.is_valid():
-            # serializer.save()
-            # return JSONResponse(serializer.data)
-        # return JSONResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'POST':
+        print request.POST
+        bindingId = request.POST.get('bindingId', '').strip()
+        longitude = request.POST.get('longitude', '').strip()
+        latitude = request.POST.get('latitude', '').strip()
 
-    # elif request.method == 'DELETE':
-        # binding.delete()
-        # return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            binding = Binding.objects.get(id=bindingId)
+        except Binding.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        except Exception,e:
+            return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        location = Location(
+                    binding=binding,
+                    longitude=longitude,
+                    latitude=latitude
+                )
+        location.save()
+
+        ### get related users and return to clients
+        users = []
+        for binding in Binding.objects.all():
+            nearby_user = binding.user
+            social_auth = UserSocialAuth.objects.get(user=nearby_user)
+            attendances = Attendance.objects.filter(binding=binding)
+            data = {
+                    'bindingId': str(binding.id),
+                    'uid': str(social_auth.uid),
+                    'first_name': nearby_user.first_name,
+                    'last_name': nearby_user.last_name,
+                    'provider': social_auth.provider,
+                    'attendances': attendances,
+                    'associated_attendances': attendances,
+                    'distance': '0.5km',
+                    'appear_time': datetime.datetime.now()
+                    }
+            users.append(data)
+
+        nearby_serializer = UserNearbySerializer(users, many=True)
+        return JSONResponse(nearby_serializer.data)

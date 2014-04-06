@@ -72,8 +72,8 @@ class Location(models.Model):
 
     latitude = models.CharField(max_length=45)
     longitude = models.CharField(max_length=45)
-    create_time = models.DateTimeField()
-    expire_time = models.DateTimeField()
+    create_time = models.DateTimeField(auto_now_add=True)
+    expire_time = models.DateTimeField(blank=True, null=True)
 
     ### Foreign keys
     binding = models.ForeignKey(Binding)
@@ -83,4 +83,4 @@ class Location(models.Model):
         verbose_name_plural = 'Locations'
 
     def __unicode__(self):
-        return "%s %s" % self.latitude, self.longitude
+        return  self.latitude + self.longitude

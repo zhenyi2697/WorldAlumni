@@ -14,7 +14,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('id', 'binding', 'gender', 'image_url')
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'binding', 'latitude', 'longitude')
+    list_display = ('id', 'binding', 'latitude', 'longitude', 'create_time', 'expire_time')
 
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Attendance, AttendanceAdmin)

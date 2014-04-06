@@ -33,8 +33,26 @@ class BindingSerializer(serializers.ModelSerializer):
         fields = ('id', 'bind_from', 'create_time', 'modify_time', 'user', 'schools')
 
 class AttendanceSerializer(serializers.ModelSerializer):
+    school = serializers.RelatedField()
 
     class Meta:
         model = Attendance
-        fields = ('id', 'binding', 'school', 'type', 'attend_year', 'finish_year')
+        fields = ('id', 'binding', 'school', 'type', 'attend_year')
+
+class LocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Location
+        fields = ('id', 'binding', 'latitude', 'longitude', 'create_time', 'expire_time')
+
+class UserNearbySerializer(serializers.Serializer):
+    bindingId = serializers.CharField(max_length=200)
+    uid = serializers.CharField(max_length=200)
+    first_name = serializers.CharField(max_length=200)
+    last_name = serializers.CharField(max_length=200)
+    provider = serializers.CharField(max_length=200)
+    attendances = AttendanceSerializer(required=False, many=True)
+    associated_attendances = AttendanceSerializer(required=False, many=True)
+    distance = serializers.CharField(max_length=200)
+    appear_time = serializers.DateTimeField()
 
