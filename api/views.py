@@ -73,9 +73,9 @@ def check_binding(request):
 
 
 @csrf_exempt
-def post_location(request):
+def nearby_users(request):
     '''
-    Add a new user location entry
+    get nearby users by client locations
     '''
 
     if request.method == 'POST':
@@ -96,7 +96,7 @@ def post_location(request):
                     longitude=longitude,
                     latitude=latitude
                 )
-        location.save()
+        # location.save()
 
         ### get related users and return to clients
         users = []
@@ -112,8 +112,10 @@ def post_location(request):
                     'provider': social_auth.provider,
                     'attendances': attendances,
                     'associated_attendances': attendances,
-                    'distance': '0.5km',
-                    'appear_time': datetime.datetime.now()
+                    'distance': '0.05km',
+                    'appear_time': '23 hour ago',
+                    'latitude': latitude,
+                    'longitude': longitude
                     }
             users.append(data)
 

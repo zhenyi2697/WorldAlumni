@@ -54,5 +54,7 @@ class UserNearbySerializer(serializers.Serializer):
     attendances = AttendanceSerializer(required=False, many=True)
     associated_attendances = AttendanceSerializer(required=False, many=True)
     distance = serializers.CharField(max_length=200)
-    appear_time = serializers.DateTimeField()
+    appear_time = serializers.CharField(max_length=200)
+    latitude = serializers.CharField(max_length=200)
+    longitude = serializers.CharField(max_length=200)
 
