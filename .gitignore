@@ -10,6 +10,8 @@ media/
 .idea/
 
 migrations/
+rest_framework/
 
 settings_production.py
+WorldAlumni/wsgi.py
 
