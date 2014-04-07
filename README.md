@@ -35,6 +35,10 @@ Since Django does not provide schema migration, to avoid manully modify the data
 
 	$ sudo pip install south
 
+[Python social auth](http://psa.matiasaguirre.net/docs/index.html):   
+
+    $ sudo pip install python-social-auth
+
 [Django Rest Framework](http://www.django-rest-framework.org/):   
 We use djangoRestFramework to develop our rest apis
 
