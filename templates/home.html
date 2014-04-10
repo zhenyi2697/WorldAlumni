@@ -1,7 +1,22 @@
 {% load url from future %}
-This is the new home page.
+
+
+<div>
+{% if user.is_authenticated %}
+  You have logged in: {{user.username}}
+{% else %}
+  You are not logged in
+{% endif %}
+</div>
+</br>
+
+<div>
 <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
+</div>
+<div>
 <a href="{% url 'social:begin' 'linkedin-oauth2' %}">Login with LinkedIn</a>
+</div>
+
 
 
 
