@@ -1,4 +1,5 @@
 import datetime
+from math import radians, cos, sin, asin, sqrt
 
 from django.http import HttpResponse
 from rest_framework import status
@@ -71,6 +72,91 @@ def check_binding(request):
         print serializer.data
         return JSONResponse(serializer.data)
 
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+
+    # 6367 km is the radius of the Earth
+    km = 6367 * c
+    return km
+
+def pretty_date(time=False):
+    """
+    Get a datetime object or a int() Epoch timestamp and return a
+    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
+    'just now', etc
+    """
+    from datetime import datetime
+    from django.utils import timezone
+    # now = datetime.now()
+    now = timezone.now()
+    if type(time) is int:
+        diff = now - datetime.fromtimestamp(time)
+    elif isinstance(time,datetime):
+        diff = now - time
+    elif not time:
+        diff = now - now
+    second_diff = diff.seconds
+    day_diff = diff.days
+
+    if day_diff < 0:
+        return ''
+
+    if day_diff == 0:
+        if second_diff < 10:
+            return "just now"
+        if second_diff < 60:
+            return str(second_diff) + " sec ago"
+        if second_diff < 120:
+            return  "a minute ago"
+        if second_diff < 3600:
+            return str( second_diff / 60 ) + " min ago"
+        if second_diff < 7200:
+            return "an hour ago"
+        if second_diff < 86400:
+            return str( second_diff / 3600 ) + " hours ago"
+    if day_diff == 1:
+        return "Yesterday"
+    if day_diff < 7:
+        return str(day_diff) + " days ago"
+    if day_diff < 31:
+        return str(day_diff/7) + " weeks ago"
+    if day_diff < 365:
+        return str(day_diff/30) + " months ago"
+    return str(day_diff/365) + " years ago"
+
+def computeDistance(from_binding, to_binding):
+
+    if from_binding == to_binding:
+        return('0.00km', 'now')
+
+    from_locations = Location.objects.filter(binding=from_binding).order_by('create_time')
+    to_locations = Location.objects.filter(binding=to_binding).order_by('create_time')
+
+    if len(to_locations) > 0:
+
+        from_loc = from_locations[0]
+        to_loc = to_locations[0]
+
+        distance = haversine(float(from_loc.longitude), float(from_loc.latitude), float(to_loc.longitude),
+                float(to_loc.latitude))
+        distance = "%.2fkm" % distance
+        appear_time = pretty_date(to_loc.create_time)
+
+        return (distance, appear_time)
+
+    else:
+        return ('0.00km', 'no data')
 
 @csrf_exempt
 def nearby_users(request):
@@ -85,18 +171,18 @@ def nearby_users(request):
         latitude = request.POST.get('latitude', '').strip()
 
         try:
-            binding = Binding.objects.get(id=bindingId)
+            me = Binding.objects.get(id=bindingId)
         except Binding.DoesNotExist:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         except Exception,e:
             return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         location = Location(
-                    binding=binding,
+                    binding=me,
                     longitude=longitude,
                     latitude=latitude
                 )
-        # location.save()
+        location.save()
 
         ### get related users and return to clients
         users = []
@@ -104,6 +190,7 @@ def nearby_users(request):
             nearby_user = binding.user
             social_auth = UserSocialAuth.objects.get(user=nearby_user)
             attendances = Attendance.objects.filter(binding=binding)
+            distance, appear_time = computeDistance(me, binding)
             data = {
                     'bindingId': str(binding.id),
                     'uid': str(social_auth.uid),
@@ -112,8 +199,8 @@ def nearby_users(request):
                     'provider': social_auth.provider,
                     'attendances': attendances,
                     'associated_attendances': attendances,
-                    'distance': '0.05km',
-                    'appear_time': '23 hour ago',
+                    'distance': distance,
+                    'appear_time': appear_time,
                     'latitude': latitude,
                     'longitude': longitude
                     }
@@ -121,3 +208,4 @@ def nearby_users(request):
 
         nearby_serializer = UserNearbySerializer(users, many=True)
         return JSONResponse(nearby_serializer.data)
+
