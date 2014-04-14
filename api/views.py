@@ -156,7 +156,7 @@ def computeDistance(from_binding, to_binding):
         return (distance, appear_time, to_loc.longitude, to_loc.latitude)
 
     else:
-        return ('0.00km', 'no data', '0', '0')
+        return ('no data', 'no data', '0', '0')
 
 def bind_school(school):
     import urllib2
