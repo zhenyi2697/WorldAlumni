@@ -158,6 +158,47 @@ def computeDistance(from_binding, to_binding):
     else:
         return ('0.00km', 'no data')
 
+def bind_school(school):
+    import urllib2
+    import json
+    import re
+
+    if school.sid:
+        r = urllib2.urlopen('http://graph.facebook.com/'+school.sid)
+        o = json.loads(r.read())
+        school_link = o.get('link', None)
+        print school_link
+        if school_link:
+            r = urllib2.urlopen(school_link)
+            school_search = re.search('window\.location\.replace\("(.*)\?rf=[0-9]*"\)', r.read(), re.IGNORECASE)
+
+            if school_search:
+                print school_search.group(1)
+                school_link = school_search.group(1).replace("\/", "/")
+                # school.fblink = school_search.group(1).replace("\/", "/")
+                # school.save()
+            else:
+                ### this school is the final link
+                # school.ref = school
+                # school.fblink = school_link
+                # school.save()
+                print 'redirect link not found'
+
+            ref_school = School.objects.filter(fblink=school_link)
+            if len(ref_school) > 0:
+                school.ref = ref_school[0]
+            else:
+                school.fblink = school_link
+                school.ref = school
+
+            school.save()
+
+        else:
+            return
+    else:
+        return
+
+
 @csrf_exempt
 def nearby_users(request):
     '''
@@ -208,6 +249,11 @@ def nearby_users(request):
 
         ### sort users by distance
         users.sort(key=lambda x: x['distance'])
+
+        atts = Attendance.objects.filter(binding=me)
+        schools = [a.school for a in atts]
+        for s in schools:
+            bind_school(s)
 
         nearby_serializer = UserNearbySerializer(users, many=True)
         return JSONResponse(nearby_serializer.data)
