@@ -250,10 +250,10 @@ def nearby_users(request):
         ### sort users by distance
         users.sort(key=lambda x: x['distance'])
 
-        atts = Attendance.objects.filter(binding=me)
-        schools = [a.school for a in atts]
-        for s in schools:
-            bind_school(s)
+        # atts = Attendance.objects.filter(binding=me)
+        # schools = [a.school for a in atts]
+        # for s in schools:
+            # bind_school(s)
 
         nearby_serializer = UserNearbySerializer(users, many=True)
         return JSONResponse(nearby_serializer.data)
