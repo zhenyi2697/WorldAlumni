@@ -1,6 +1,21 @@
 {% load url from future %}
 
+<head>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+      /*google.load("search", "1");
+      google.load("jquery", "1.4.2");
+      google.load("jqueryui", "1.7.2");
+      navigator.geolocation.getCurrentPosition(GetLocation);
+      function GetLocation(location) {
+          alert(location.coords.latitude);
+          alert(location.coords.longitude);
+          alert(location.coords.accuracy);
+      }*/
+  </script>
+</head>
 
+<body>
 <div>
 {% if user.is_authenticated %}
   You have logged in: {{user.username}}
@@ -17,6 +32,7 @@
 <a href="{% url 'social:begin' 'linkedin-oauth2' %}">Login with LinkedIn</a>
 </div>
 
+</body>
 
 
 
