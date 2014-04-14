@@ -206,6 +206,9 @@ def nearby_users(request):
                     }
             users.append(data)
 
+        ### sort users by distance
+        users.sort(key=lambda x: x['distance'])
+
         nearby_serializer = UserNearbySerializer(users, many=True)
         return JSONResponse(nearby_serializer.data)
 
