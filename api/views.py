@@ -137,8 +137,8 @@ def pretty_date(time=False):
 
 def computeDistance(from_binding, to_binding):
 
-    from_locations = Location.objects.filter(binding=from_binding).order_by('create_time')
-    to_locations = Location.objects.filter(binding=to_binding).order_by('create_time')
+    from_locations = Location.objects.filter(binding=from_binding).order_by('-create_time')
+    to_locations = Location.objects.filter(binding=to_binding).order_by('-create_time')
 
     if from_binding == to_binding:
         return('0.00km', 'now', to_locations[0].longitude, to_locations[0].latitude)
