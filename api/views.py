@@ -137,11 +137,11 @@ def pretty_date(time=False):
 
 def computeDistance(from_binding, to_binding):
 
-    if from_binding == to_binding:
-        return('0.00km', 'now')
-
     from_locations = Location.objects.filter(binding=from_binding).order_by('create_time')
     to_locations = Location.objects.filter(binding=to_binding).order_by('create_time')
+
+    if from_binding == to_binding:
+        return('0.00km', 'now', to_locations[0].longitude, to_locations[0].latitude)
 
     if len(to_locations) > 0:
 
@@ -153,10 +153,10 @@ def computeDistance(from_binding, to_binding):
         distance = "%.2fkm" % distance
         appear_time = pretty_date(to_loc.create_time)
 
-        return (distance, appear_time)
+        return (distance, appear_time, to_loc.longitude, to_loc.latitude)
 
     else:
-        return ('0.00km', 'no data')
+        return ('0.00km', 'no data', '0', '0')
 
 def bind_school(school):
     import urllib2
@@ -231,7 +231,7 @@ def nearby_users(request):
             nearby_user = binding.user
             social_auth = UserSocialAuth.objects.get(user=nearby_user)
             attendances = Attendance.objects.filter(binding=binding)
-            distance, appear_time = computeDistance(me, binding)
+            distance, appear_time, longitude, latitude= computeDistance(me, binding)
             data = {
                     'bindingId': str(binding.id),
                     'uid': str(social_auth.uid),
