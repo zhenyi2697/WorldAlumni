@@ -19,6 +19,12 @@ from django.conf import settings
 def home(request):
     ''' home page for website'''
 
-    return render(request, 'home.html', {})
+    bindingId = '-1'
+    if request.user:
+        bindings = request.user.binding_set.all()
+        if len(bindings) > 0:
+            bindingId = bindings[0].id
+
+    return render(request, 'home.html', {'bindingId': bindingId})
 
 
