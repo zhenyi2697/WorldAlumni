@@ -2,16 +2,24 @@
 
 <head>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script src="{{STATIC_URL}}js/jquery-2.0.3.js"></script>
   <script type="text/javascript">
-      /*google.load("search", "1");
-      google.load("jquery", "1.4.2");
-      google.load("jqueryui", "1.7.2");
+      google.load("search", "1");
+      /* google.load("jquery", "1.4.2"); */
+      /* google.load("jqueryui", "1.7.2"); */
+
+    {% if user.is_authenticated %}
+      console.log('loading geo location')
       navigator.geolocation.getCurrentPosition(GetLocation);
       function GetLocation(location) {
-          alert(location.coords.latitude);
-          alert(location.coords.longitude);
-          alert(location.coords.accuracy);
-      }*/
+          console.log(location.coords.latitude);
+          console.log(location.coords.longitude);
+          console.log(location.coords.accuracy);
+          $("#latitude").html(location.coords.latitude);
+          $("#longitude").html(location.coords.longitude);
+          console.log('location loaded');
+      }
+      {% endif %}
   </script>
 </head>
 
@@ -19,20 +27,47 @@
 <div>
 {% if user.is_authenticated %}
   You have logged in: {{user.username}}
+
+  <div>
+    Your coordinate is:
+    <br/>
+    <strong>Latitude: </strong> <span id="latitude"></span><br/>
+    <strong>Longitude: </strong> <span id="longitude"></span>
+  </div>
+  <a href="javascript:void(0);" onclick="user_nearby()">User nearby</a>
+  <br/>
+  <span id="sent_result"></span>
 {% else %}
   You are not logged in
+  <div>
+  <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
+  </div>
+  <div>
+  <a href="{% url 'social:begin' 'linkedin-oauth2' %}">Login with LinkedIn</a>
+  </div>
 {% endif %}
 </div>
 </br>
+<script type="text/javascript">
 
-<div>
-<a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
-</div>
-<div>
-<a href="{% url 'social:begin' 'linkedin-oauth2' %}">Login with LinkedIn</a>
-</div>
+  var user_nearby = function(){
+    var latitude =  $("#latitude").html();
+    var longitude =  $("#longitude").html();
+
+    post_params = {
+      'bindingId': {{bindingId}},
+      'longitude': longitude,
+      'latitude': latitude
+    }
+
+    $.post('/api/nearby_users/', post_params).done(function(d){
+      console.log(d);
+      $("#sent_result").html("Your location has been sent to server")
+    }, 'json');
+
+  }
+
+</script>
 
 </body>
-
-
 
