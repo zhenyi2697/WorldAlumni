@@ -20,7 +20,7 @@ def home(request):
     ''' home page for website'''
 
     bindingId = '-1'
-    if request.user:
+    if request.user.is_authenticated():
         bindings = request.user.binding_set.all()
         if len(bindings) > 0:
             bindingId = bindings[0].id
