@@ -394,8 +394,9 @@
               }
               row_data += "<td>"+ f.first_name + " "+ f.last_name +"</td>";
               row_data += "<td>" +f.associated_attendances[0].school + "</td>";
-              row_data += "<td>"+ f.distance +"</td>";
-              row_data += "<td>"+ f.appear_time +"</td>";
+              row_data += "<td class='hidden-xs'>"+ f.distance +"</td>";
+              row_data += "<td class='hidden-xs'>"+ f.appear_time +"</td>";
+              row_data += "<td class='visible-xs'>"+ f.distance +" ("+ f.appear_time +")</td>";
 
               rows.push(row_data);
             }
