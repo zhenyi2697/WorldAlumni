@@ -63,14 +63,12 @@ def check_binding(request):
             bindings = Binding.objects.filter(user=user_social_auth.user)
         else:
             user = auth_by_token(request, provider)
-            print user
             # if user:
                 # strategy = load_strategy(request=request, backend=backend)
                 # _do_login(strategy, user)
             bindings = Binding.objects.filter(user=user)
 
         serializer = BindingSerializer(bindings, many=True)
-        print serializer.data
         return JSONResponse(serializer.data)
 
 def haversine(lon1, lat1, lon2, lat2):
@@ -168,13 +166,11 @@ def bind_school(school):
         r = urllib2.urlopen('http://graph.facebook.com/'+school.sid)
         o = json.loads(r.read())
         school_link = o.get('link', None)
-        print school_link
         if school_link:
             r = urllib2.urlopen(school_link)
             school_search = re.search('window\.location\.replace\("(.*)\?rf=[0-9]*"\)', r.read(), re.IGNORECASE)
 
             if school_search:
-                print school_search.group(1)
                 school_link = school_search.group(1).replace("\/", "/")
                 # school.fblink = school_search.group(1).replace("\/", "/")
                 # school.save()
@@ -207,7 +203,6 @@ def nearby_users(request):
     '''
 
     if request.method == 'POST':
-        print request.POST
         bindingId = request.POST.get('bindingId', '').strip()
         longitude = request.POST.get('longitude', '').strip()
         latitude = request.POST.get('latitude', '').strip()
