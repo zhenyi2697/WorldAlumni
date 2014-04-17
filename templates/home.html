@@ -1,73 +1,495 @@
-{% load url from future %}
 
-<head>
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script src="{{STATIC_URL}}js/jquery-2.0.3.js"></script>
-  <script type="text/javascript">
-      google.load("search", "1");
-      /* google.load("jquery", "1.4.2"); */
-      /* google.load("jqueryui", "1.7.2"); */
+<!DOCTYPE html>
+<html lang="en">
+    
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        
+		<title> WorldAlumni | Schoolmates around the you </title>
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<meta name="author" content="ZTApps" />
+		<link rel="shortcut icon" href="{{STATIC_URL}}img/">
+        
+        <!-- Fonts -->
+        <link href='https://fonts.googleapis.com/css?family=Lato:300,400,600,700' rel='stylesheet' type='text/css'>  
+        <!-- End Fonts -->
+        
+        <!-- CSS Files -->
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/font-awesome.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/animate.min.css">
+        <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/lightbox.css">
+		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css" />
+        <!-- End CSS Files -->
+         
+	</head>
+    
+	<body>
+        
+        <!-- Navigation Section -->
+        <nav class="navbar" role="navigation">
+            
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="fa fa-bars"></span> 
+                </button>
+                <a class="navbar-brand" href="#">WorldAlumni</a>
+            </div>
+            
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#services">SERVICE</a>
+                    </li>
+                    <li>
+                        <a href="#friends">FRIENDS</a>
+                    </li>
+                    <li class="home">
+                        <a href="#">
+                            <img src="{{STATIC_URL}}img/logo-no-text.png" alt="Home" width="128" height="128">
+                            <br>
+                            WorldAlumni
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#about">ABOUT</a>
+                    </li>    
+                    <li>
+                        <a href="#contact">CONTACT</a>
+                    </li> 
+                </ul>
+            </div>
 
-    {% if user.is_authenticated %}
-      console.log('loading geo location')
-      navigator.geolocation.getCurrentPosition(GetLocation);
-      function GetLocation(location) {
-          console.log(location.coords.latitude);
-          console.log(location.coords.longitude);
-          console.log(location.coords.accuracy);
-          $("#latitude").html(location.coords.latitude);
-          $("#longitude").html(location.coords.longitude);
-          console.log('location loaded');
-      }
-      {% endif %}
-  </script>
-</head>
-
-<body>
-<div>
-{% if user.is_authenticated %}
-  You have logged in: {{user.username}}
-
-  <div>
-    Your coordinate is:
-    <br/>
-    <strong>Latitude: </strong> <span id="latitude"></span><br/>
-    <strong>Longitude: </strong> <span id="longitude"></span>
-  </div>
-  <a href="javascript:void(0);" onclick="user_nearby()">User nearby</a>
-  <br/>
-  <span id="sent_result"></span>
-{% else %}
-  You are not logged in
-  <div>
-  <a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a>
-  </div>
-  <div>
-  <a href="{% url 'social:begin' 'linkedin-oauth2' %}">Login with LinkedIn</a>
-  </div>
-{% endif %}
-</div>
-</br>
-<script type="text/javascript">
-
-  var user_nearby = function(){
-    var latitude =  $("#latitude").html();
-    var longitude =  $("#longitude").html();
-
-    post_params = {
-      'bindingId': {{bindingId}},
-      'longitude': longitude,
-      'latitude': latitude
-    }
-
-    $.post('/api/nearby_users/', post_params).done(function(d){
-      console.log(d);
-      $("#sent_result").html("Your location has been sent to server")
-    }, 'json');
-
-  }
-
-</script>
-
-</body>
-
+        </nav>
+        <!-- End Navigation Section -->
+        
+        <!-- Home Section -->
+        <section id="home">
+        
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-sm-12">
+                        <div class="visible-xs">
+                            <img src="{{STATIC_URL}}img/logo.png" class="logo" alt="Home" width="192" height="192">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <p class="text-extra-large">WorldAlumni helps you find old schoolmates around you<br class="uk-hidden-small"> wherever you are.
+                        </p>
+                    </div>
+                </div>
+            </div> 
+        
+        </section>
+        <!-- Home Section -->
+        
+        <!-- Services Section -->
+        <section id="services">
+             
+            <div class="container">
+                
+                <div class="row text-center"> 
+                    <div class="col-sm-12"> 
+                        <h1 class="heading-large section-color-1">Functionality</h1>
+                    </div>
+                    <div class="col-sm-12"> 
+                        <p class="text-large section-color-1">
+                            We use your social network data & location service to find your nearby frineds.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row text-center">
+                
+                    <div class="col-sm-6 col-lg-3 service-item">
+                        <div>
+                            <i class="fa fa-facebook"></i>
+                        </div>
+                        <div>
+                            <h3 class="section-color-1">Socail Login</h3>
+                            <p class="section-color-1">
+                                Login with facebook or linkedin to import education and working history
+                            </p>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-6 col-lg-3 service-item">
+                        <div>
+                            <i class="fa fa-map-marker"></i>
+                        </div>
+                        <div>
+                            <h3 class="section-color-1">Location Based</h3>
+                            <p class="section-color-1">
+                                Based on your current location, we give you nearby schoolmates
+                            </p>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-6 col-lg-3 service-item">
+                        <div>
+                            <i class="fa fa-link"></i>
+                        </div>
+                        <div>
+                            <h3 class="section-color-1">Data Integration</h3>
+                            <p class="section-color-1">
+                                We combine data sources from both facebook & linkedin and break the gap between differents schools.
+                            </p>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-6 col-lg-3 service-item">
+                        <div>
+                            <i class="fa fa-apple"></i>
+                        </div>
+                        <div>
+                            <h3 class="section-color-1">iOS available</h3>
+                            <p class="section-color-1">
+                                We also have an iOS application available for you
+                            </p>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            
+        </section>
+        <!-- End Services Section -->
+        
+        <!-- Friends Section -->
+        <section id="friends">
+             
+            <div class="container">
+                
+                <div class="row text-center"> 
+                    <div class="col-sm-12"> 
+                        <h1 class="heading-large section-color-2">Nearby Schoolmates</h1>
+                    </div>
+                    <div class="col-sm-12"> 
+                        <p class="text-large section-color-2">
+                            We create beautiful responsive Websites using the latest Web Technologies,<br>
+                            for what ever need you may have.
+                        </p>
+                    </div>
+                </div>
+                
+                <ul id="gallery">
+                    
+                    <li class="code design grid-unit">
+                        <a href="portfolio/project-1/index.html" class="thumbnail">
+                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1350076/ipad3_1885-1_1x.jpg" alt="">
+                            <div class="mask">
+                                <div class="meta">
+                                    <div class="words">
+                                        <span class="title">Yule Log</span>
+                                        <span class="role">Design / Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    
+                    <li class="web code grid-unit">
+                        <a href="portfolio/project-1/index.html" class="thumbnail">
+                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1046290/sqqssq_1x.jpg" alt="">
+                            <div class="mask">
+                                <div class="meta">
+                                    <div class="words">
+                                        <span class="title">Earth</span>
+                                        <span class="role">Web / Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li> 
+                    
+                    <li class="app code grid-unit">
+                        <a href="portfolio/project-1/index.html" class="thumbnail">
+                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1325243/111111aaaa_1x.jpg" alt="">
+                            <div class="mask">
+                                <div class="meta">
+                                    <div class="words">
+                                        <span class="title">Hobbit Holes</span>
+                                        <span class="role">App / Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li> 
+                    
+                    <li class="web app code grid-unit">
+                        <a href="portfolio/project-1/index.html" class="thumbnail">
+                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1326185/22222_1x.jpg" alt="">
+                            <div class="mask">
+                                <div class="meta">
+                                    <div class="words">
+                                        <span class="title">Out of the Shire</span>
+                                        <span class="role">Web / App / Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li> 
+                    
+                    <li class="web design grid-unit">
+                        <a href="portfolio/project-1/index.html" class="thumbnail">
+                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1192944/2s2s2s_1x.jpg" alt="">
+                            <div class="mask">
+                                <div class="meta">
+                                    <div class="words">
+                                        <span class="title">Map</span>
+                                        <span class="role">Web / Design</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li> 
+                    
+                    <li class="app design grid-unit">
+                        <a href="portfolio/project-1/index.html" class="thumbnail">
+                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1180887/kaboom_1x.jpg" alt="">
+                            <div class="mask">
+                                <div class="meta">
+                                    <div class="words">
+                                        <span class="title">Kaboom!</span>
+                                        <span class="role">App / Design</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li> 
+                </ul>
+                    
+                <div class="row text-center">
+                    <a href="portfolio/index.html" class="btn btn-2">View All Projects</a>
+                </div>
+                
+            </div>
+            
+        </section>
+        <!-- End Portfolio Section -->
+        
+        <!-- About Section -->
+        <section id="about">
+             
+            <div class="container">
+                
+                <div class="row text-center"> 
+                    <div class="col-sm-12"> 
+                        <h1 class="heading-large section-color-1">ABOUT US</h1>
+                    </div>
+                    <div class="col-sm-12"> 
+                        <p class="text-large section-color-1">
+                            We create beautiful responsive Websites using the latest Web Technologies,<br>
+                            for what ever need you may have.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row text-center">
+                
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="team-member">
+                            <div class="header">
+                                <span class="name">Jack Patello</span>
+                                <span class="position">Developer</span>
+                            </div>
+                            <div class="content">
+                                <div class="info">
+                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Computer Science.</p>
+                                    <p>Sed in luctus lectus, ac commodo velit. Nulla imperdiet ullamcorper augue ac ultricies.</p>
+                                </div>
+                                <img src="{{STATIC_URL}}img/team-1.jpg" alt="">
+                            </div>
+                            <div class="footer">
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li> 
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="team-member">
+                            <div class="header">
+                                <span class="name">Gavin Free</span>
+                                <span class="position">Designer</span>
+                            </div>
+                            <div class="content">
+                                <div class="info">
+                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Graphics and Web Design.</p>
+                                </div>
+                                <img src="{{STATIC_URL}}img/team-2.jpg" alt="">
+                            </div>
+                            <div class="footer">
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li>  
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="team-member">
+                            <div class="header">
+                                <span class="name">Gus Sorola</span>
+                                <span class="position">CEO</span>
+                            </div>
+                            <div class="content">
+                                <div class="info">
+                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Multimedia.</p>
+                                    <p>Sed in luctus lectus, ac commodo velit. Nulla imperdiet ullamcorper augue ac ultricies.</p>
+                                </div>
+                                <img src="{{STATIC_URL}}img/team-3.jpg" alt="">
+                            </div>
+                            <div class="footer">
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li>  
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="team-member">
+                            <div class="header">
+                                <span class="name">Barbara Dunkley</span>
+                                <span class="position">Designer</span>
+                            </div>
+                            <div class="content">
+                                <div class="info">
+                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Computer Science and Multimedia.</p>
+                                </div>
+                                <img src="{{STATIC_URL}}img/team-4.jpg" alt="">
+                            </div>
+                            <div class="footer">
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li> 
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                    
+                </div>
+                
+            </div>
+            
+        </section>
+        <!-- End About Section -->
+        
+        <!-- Footer Section -->
+        <footer>
+            
+            <div class="container text-center">
+                
+                <div class="row">
+                    
+                    <div class="col-sm-12">
+                        <ul class="social list-inline">
+                            <li>
+                                <div>
+                                    <a href="#" class="facebook">
+                                        <i class="fa fa-facebook"></i>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <a href="#" class="twitter">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <a href="#" class="dribbble">
+                                        <i class="fa fa-dribbble"></i>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <a href="#" class="vimeo">
+                                        <i class="fa fa-vimeo-square"></i>
+                                    </a>
+                                </div>
+                            </li> 
+                            <li>
+                                <div>
+                                    <a href="#" class="linkedin">
+                                        <i class="fa fa-linkedin"></i>
+                                    </a>
+                                </div>
+                            </li> 
+                            <li>
+                                <div>
+                                    <a href="#" class="google-plus">
+                                        <i class="fa fa-google-plus"></i>
+                                    </a>
+                                </div>
+                            </li> 
+                            <li>
+                                <div>
+                                    <a href="#" class="youtube">
+                                        <i class="fa fa-youtube"></i>
+                                    </a>
+                                </div>
+                            </li> 
+                        </ul>
+                    </div> 
+                    
+                    <div class="col-sm-12">
+                        <ul class="subnav list-inline">
+                            <li><a href="#services">Functionality</a></li>
+                            <li><a href="#friends">Friends</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-sm-12"> 
+                        <p>
+                            WorldAlumni made by <a href="http://www.znz.fr">Z&z</a>.<br>
+                            Copyright &copy; 2014, All Rights Reserved
+                        </p>
+                    </div>
+                    
+                    <div class="col-sm-12">
+                        <a href="#">
+                            <img src="{{STATIC_URL}}img/logo-text-right.png" class="logo" alt="logo">
+                        </a>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        
+        </footer>
+        <!-- End Footer Section -->
+    
+        <!-- Scripts Section -->
+        <script src="{{STATIC_URL}}js/jquery.1.10.1.js"></script>
+        <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+        <script src="{{STATIC_URL}}js/smoothscroll.js"></script>
+        <!-- End Scripts Section -->
+        
+    </body>
+    
+</html> 
