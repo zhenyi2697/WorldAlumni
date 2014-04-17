@@ -10,6 +10,14 @@ import integrate
 FACEBOOK_PROVIDER='facebook'
 LINKEDIN_PROVIDER='linkedin-oauth2'
 
+def associate_by_email(**kwargs):
+    try:
+        email = kwargs['details']['email']
+        kwargs['user'] = User.objects.get(email=email)
+    except:
+        pass
+    return kwargs
+
 def user_details(strategy, details, response, user=None, *args, **kwargs):
     """Update user details using data from provider."""
 

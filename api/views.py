@@ -196,6 +196,21 @@ def bind_school(school):
         return
 
 
+def find_associated_bindings(binding):
+    ''' find associated bindings for a binding'''
+
+    my_attendances = Attendance.objects.filter(binding=binding)
+    nearby_bindings = {}
+    for ma in my_attendances:
+        ref_schools = School.objects.filter(ref=ma.school.ref)
+        for s in ref_schools:
+            ads = Attendance.objects.filter(school=s)
+            for a in ads:
+                nearby_bindings[a.binding.id] = (a.binding, a)
+
+    return nearby_bindings
+
+
 @csrf_exempt
 def nearby_users(request):
     '''
@@ -236,7 +251,8 @@ def nearby_users(request):
         users = []
         for bid, (binding, ad) in nearby_bindings.iteritems():
             nearby_user = binding.user
-            social_auth = UserSocialAuth.objects.get(user=nearby_user)
+            auth_users = UserSocialAuth.objects.filter(user=nearby_user)
+            social_auth = auth_users[0] ### one user could have two bindings associated with, now get only the first one
             attendances = Attendance.objects.filter(binding=binding)
             distance, appear_time, longitude, latitude= computeDistance(me, binding)
             data = {
