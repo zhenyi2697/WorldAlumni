@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import urllib2
 import json
 import re
@@ -71,7 +72,9 @@ def bind_school_fb(sid):
      
     # A step to compare newly added fb school info to L items.
     
-def bind_school_li()
+def bind_school_li():
+    
+    pass
     
 if __name__ == '__main__':
 

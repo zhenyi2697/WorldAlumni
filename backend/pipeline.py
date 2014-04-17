@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 
 from social_auth.models import UserSocialAuth
