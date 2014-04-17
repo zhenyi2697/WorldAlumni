@@ -785,4 +785,9 @@ footer .logo {
   vertical-align:middle;
 }
 
+.friend-thumbnail {
+  width: 40px;
+  height: 40px;
+}
+
 /* END MEDIA QUERIES */
