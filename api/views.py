@@ -222,8 +222,19 @@ def nearby_users(request):
         location.save()
 
         ### get related users and return to clients
+        my_attendances = Attendance.objects.filter(binding=me)
+        nearby_bindings = {}
+        for ma in my_attendances:
+            ref_schools = School.objects.filter(ref=ma.school)
+            for s in ref_schools:
+                ads = Attendance.objects.filter(school=s)
+                for a in ads:
+                    nearby_bindings[a.binding.id] = a.binding
+
+        print nearby_bindings
+
         users = []
-        for binding in Binding.objects.all():
+        for bid, binding in nearby_bindings.iteritems():
             nearby_user = binding.user
             social_auth = UserSocialAuth.objects.get(user=nearby_user)
             attendances = Attendance.objects.filter(binding=binding)
@@ -245,8 +256,6 @@ def nearby_users(request):
 
         ### sort users by distance
         users.sort(key=lambda x: x['distance'])
-        
-        
 
         # atts = Attendance.objects.filter(binding=me)
         # schools = [a.school for a in atts]
