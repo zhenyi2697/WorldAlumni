@@ -229,12 +229,12 @@ def nearby_users(request):
             for s in ref_schools:
                 ads = Attendance.objects.filter(school=s)
                 for a in ads:
-                    nearby_bindings[a.binding.id] = a.binding
+                    nearby_bindings[a.binding.id] = (a.binding, a)
 
         print nearby_bindings
 
         users = []
-        for bid, binding in nearby_bindings.iteritems():
+        for bid, (binding, ad) in nearby_bindings.iteritems():
             nearby_user = binding.user
             social_auth = UserSocialAuth.objects.get(user=nearby_user)
             attendances = Attendance.objects.filter(binding=binding)
@@ -246,7 +246,7 @@ def nearby_users(request):
                     'last_name': nearby_user.last_name,
                     'provider': social_auth.provider,
                     'attendances': attendances,
-                    'associated_attendances': attendances,
+                    'associated_attendances': [ad],
                     'distance': distance,
                     'appear_time': appear_time,
                     'latitude': latitude,
