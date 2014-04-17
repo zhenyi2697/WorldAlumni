@@ -9,6 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'backend.views.home', name='static_home'),
+    url(r'^logout/$', 'backend.views.logout', name='static_logout'),
     #url(r'^loggedin/', 'backend.views.loggedin', name='loggedin'),
     # url(r'^WorldAlumni/', include('WorldAlumni.foo.urls')),
 

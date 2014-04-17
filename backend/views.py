@@ -9,6 +9,7 @@ import zipfile
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.http import Http404
+from django.contrib.auth import logout as user_logout
 from django.shortcuts import render
 from django.template import RequestContext
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
@@ -26,5 +27,11 @@ def home(request):
             bindingId = bindings[0].id
 
     return render(request, 'home.html', {'bindingId': bindingId})
+
+def logout(request):
+    ''' logout of website'''
+    user_logout(request)
+    return HttpResponseRedirect("/")
+
 
 

@@ -551,9 +551,12 @@ nav {
 
 /* FOOTER */
 
-footer {
+#contact {
     background-color:#252525;
-    padding:120px 0;
+}
+
+footer {
+
 }
 
 footer, footer a {
@@ -775,6 +778,11 @@ footer .logo {
         line-height:20px;
     } 
     
+}
+
+/* CUSTOM CSS  */
+#friend-table td {
+  vertical-align:middle;
 }
 
 /* END MEDIA QUERIES */

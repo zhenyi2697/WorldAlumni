@@ -1,4 +1,4 @@
-
+{% load url from future %}
 <!DOCTYPE html>
 <html lang="en">
     
@@ -9,8 +9,7 @@
 		<title> WorldAlumni | Schoolmates around the you </title>
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
-		<meta name="author" content="ZTApps" />
-		<link rel="shortcut icon" href="{{STATIC_URL}}img/">
+		<meta name="author" content="Z&z" />
         
         <!-- Fonts -->
         <link href='https://fonts.googleapis.com/css?family=Lato:300,400,600,700' rel='stylesheet' type='text/css'>  
@@ -19,9 +18,8 @@
         <!-- CSS Files -->
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/font-awesome.min.css" />
-        <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/animate.min.css">
-        <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/lightbox.css">
 		<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/style.css" />
+        <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/social.css" />
         <!-- End CSS Files -->
          
 	</head>
@@ -37,7 +35,7 @@
                     <span class="sr-only">Toggle navigation</span>
                     <span class="fa fa-bars"></span> 
                 </button>
-                <a class="navbar-brand" href="#">WorldAlumni</a>
+                <a class="navbar-brand" href="javascript:void(0);">WorldAlumni</a>
             </div>
             
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -73,16 +71,55 @@
         
             <div class="container">
                 <div class="row text-center">
-                    <div class="col-sm-12">
-                        <div class="visible-xs">
-                            <img src="{{STATIC_URL}}img/logo.png" class="logo" alt="Home" width="192" height="192">
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <p class="text-extra-large">WorldAlumni helps you find old schoolmates around you<br class="uk-hidden-small"> wherever you are.
+                    <div class="col-sm-12" style="margin-bottom:-30px;">
+                         <div class="visible-xs">
+                             <img src="{{STATIC_URL}}img/logo.png" class="logo" alt="Home" width="168" height="168">
+                         </div>
+                     </div>
+
+                {%  if not user.is_authenticated %}
+                    <div class="col-sm-12" style="margin-bottom:-10px;">
+                        <p class="text-extra-large">WorldAlumni helps you find old schoolmates<br class="uk-hidden-small"> wherever you are in the world.
                         </p>
                     </div>
+                {% endif %}
+
+
                 </div>
+
+                {%  if user.is_authenticated %}
+                    <div class="row text-center">
+                      <p class="text-large" > Welcom back, {{user.username}} !
+                        <br/>
+                        <span class="text-medium">Your current coordinate is: <span id="latitude"></span>, <span id="longitude"></span></span>
+                        <br/>
+                        <br/>
+                        <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();" style="display:none;">Find nearby friends</a>
+                      </p>
+
+                        <a href="/logout/" style="color:white;"><i class="fa fa-sign-out"></i>Logout</a>
+                    </div>
+                {% else %}
+                    <div class="row text-center">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <a class="btn btn-block btn-lg btn-social btn-facebook" href="{% url 'social:begin' 'facebook' %}">
+                                <i class="fa fa-facebook"></i> Log in with Facebook
+                            </a>
+                        </div>
+                    </div>
+
+                    <br/>
+
+                    <div class="row text-center">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <a class="btn btn-block btn-lg btn-social btn-linkedin" href="{% url 'social:begin' 'linkedin-oauth2' %}">
+                                <i class="fa fa-linkedin"></i> Log in with Linkedin
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                
+
             </div> 
         
         </section>
@@ -170,103 +207,40 @@
                     <div class="col-sm-12"> 
                         <h1 class="heading-large section-color-2">Nearby Schoolmates</h1>
                     </div>
-                    <div class="col-sm-12"> 
-                        <p class="text-large section-color-2">
-                            We create beautiful responsive Websites using the latest Web Technologies,<br>
-                            for what ever need you may have.
-                        </p>
-                    </div>
+                    {% if user.is_authenticated %}
+                      <div class="col-sm-12"> 
+                          <p class="text-large section-color-2">
+                              Here is the list of your nearby schoolmates
+                              </br>
+                            <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();" style="display:none;">Find nearby friends</a>
+                          </p>
+                          <div class="row">
+                            <div class="col-md-10 col-md-offset-1">
+                              <table id="friend-table" class="table table-striped">
+                                <!--tr>
+                                  <td> <img src='http://graph.facebook.com/1241272297/picture?width=40&height=40' alt="zhenyi2697" class="img-circle" > </td>
+                                  <td> Zhenyi Zhang </td>
+                                  <td> Georgia Institute of Technology </td>
+                                  <td> 0.01km </td>
+                                  <td> 23 hours ago </td>
+                                </tr-->
+                              </table>
+                            </div>
+                          </div>
+                      </div>
+                    {% else %}
+                      <div class="col-sm-12"> 
+                          <p class="text-large section-color-2">
+                            Please log in to find your friends
+                          </p>
+                      </div>
+                    {% endif %}
                 </div>
                 
-                <ul id="gallery">
-                    
-                    <li class="code design grid-unit">
-                        <a href="portfolio/project-1/index.html" class="thumbnail">
-                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1350076/ipad3_1885-1_1x.jpg" alt="">
-                            <div class="mask">
-                                <div class="meta">
-                                    <div class="words">
-                                        <span class="title">Yule Log</span>
-                                        <span class="role">Design / Code</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </li>
-                    
-                    <li class="web code grid-unit">
-                        <a href="portfolio/project-1/index.html" class="thumbnail">
-                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1046290/sqqssq_1x.jpg" alt="">
-                            <div class="mask">
-                                <div class="meta">
-                                    <div class="words">
-                                        <span class="title">Earth</span>
-                                        <span class="role">Web / Code</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </li> 
-                    
-                    <li class="app code grid-unit">
-                        <a href="portfolio/project-1/index.html" class="thumbnail">
-                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1325243/111111aaaa_1x.jpg" alt="">
-                            <div class="mask">
-                                <div class="meta">
-                                    <div class="words">
-                                        <span class="title">Hobbit Holes</span>
-                                        <span class="role">App / Code</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </li> 
-                    
-                    <li class="web app code grid-unit">
-                        <a href="portfolio/project-1/index.html" class="thumbnail">
-                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1326185/22222_1x.jpg" alt="">
-                            <div class="mask">
-                                <div class="meta">
-                                    <div class="words">
-                                        <span class="title">Out of the Shire</span>
-                                        <span class="role">Web / App / Code</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </li> 
-                    
-                    <li class="web design grid-unit">
-                        <a href="portfolio/project-1/index.html" class="thumbnail">
-                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1192944/2s2s2s_1x.jpg" alt="">
-                            <div class="mask">
-                                <div class="meta">
-                                    <div class="words">
-                                        <span class="title">Map</span>
-                                        <span class="role">Web / Design</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </li> 
-                    
-                    <li class="app design grid-unit">
-                        <a href="portfolio/project-1/index.html" class="thumbnail">
-                            <img src="https://d13yacurqjgara.cloudfront.net/users/11867/screenshots/1180887/kaboom_1x.jpg" alt="">
-                            <div class="mask">
-                                <div class="meta">
-                                    <div class="words">
-                                        <span class="title">Kaboom!</span>
-                                        <span class="role">App / Design</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </li> 
-                </ul>
+                
                     
                 <div class="row text-center">
-                    <a href="portfolio/index.html" class="btn btn-2">View All Projects</a>
+                    {# <a href="portfolio/index.html" class="btn btn-2">View All Projects</a> #}
                 </div>
                 
             </div>
@@ -285,107 +259,56 @@
                     </div>
                     <div class="col-sm-12"> 
                         <p class="text-large section-color-1">
-                            We create beautiful responsive Websites using the latest Web Technologies,<br>
-                            for what ever need you may have.
+                            We are two graduate students from Atlanta
                         </p>
                     </div>
                 </div>
                 
                 <div class="row text-center">
                 
-                    <div class="col-sm-6 col-lg-3">
+                    <div class="col-sm-6 col-lg-3 col-lg-offset-3">
                         <div class="team-member">
                             <div class="header">
-                                <span class="name">Jack Patello</span>
-                                <span class="position">Developer</span>
+                                <span class="name">Yang Guo</span>
+                                <span class="position">Developer & Designer</span>
                             </div>
                             <div class="content">
                                 <div class="info">
-                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Computer Science.</p>
-                                    <p>Sed in luctus lectus, ac commodo velit. Nulla imperdiet ullamcorper augue ac ultricies.</p>
+                                    <p>I am a graduate from Georgia Institute of Technology where I received a Master in Electrical & Computer Engineering.</p>
                                 </div>
                                 <img src="{{STATIC_URL}}img/team-1.jpg" alt="">
                             </div>
                             <div class="footer">
                                 <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li> 
+                                    <li><a href="https://www.facebook.com/guo.yang.982"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/profile/view?id=148200288"><i class="fa fa-linkedin"></i></a></li>
                                 </ul>
                             </div>
                         </div>
                     </div> 
                 
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="team-member">
-                            <div class="header">
-                                <span class="name">Gavin Free</span>
-                                <span class="position">Designer</span>
-                            </div>
-                            <div class="content">
-                                <div class="info">
-                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Graphics and Web Design.</p>
-                                </div>
-                                <img src="{{STATIC_URL}}img/team-2.jpg" alt="">
-                            </div>
-                            <div class="footer">
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li>  
-                                </ul>
-                            </div>
-                        </div>
-                    </div> 
                 
                     <div class="col-sm-6 col-lg-3">
                         <div class="team-member">
                             <div class="header">
-                                <span class="name">Gus Sorola</span>
-                                <span class="position">CEO</span>
+                                <span class="name">Zhenyi Zhang</span>
+                                <span class="position">Developer & Designer</span>
                             </div>
                             <div class="content">
                                 <div class="info">
-                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Multimedia.</p>
-                                    <p>Sed in luctus lectus, ac commodo velit. Nulla imperdiet ullamcorper augue ac ultricies.</p>
+                                    <p>I am a graduate from Georgia Institute of Technology where I received a Master in Electrical & Computer Engineering.</p>
                                 </div>
                                 <img src="{{STATIC_URL}}img/team-3.jpg" alt="">
                             </div>
                             <div class="footer">
                                 <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li>  
+                                    <li><a href="https://www.facebook.com/zhenyi2697"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/profile/view?id=116182385&trk=nav_responsive_tab_profile"><i class="fa fa-linkedin"></i></a></li>
                                 </ul>
                             </div>
                         </div>
                     </div> 
                 
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="team-member">
-                            <div class="header">
-                                <span class="name">Barbara Dunkley</span>
-                                <span class="position">Designer</span>
-                            </div>
-                            <div class="content">
-                                <div class="info">
-                                    <p>I am a graduate from the University of Florida where I received a Bachelors in Computer Science and Multimedia.</p>
-                                </div>
-                                <img src="{{STATIC_URL}}img/team-4.jpg" alt="">
-                            </div>
-                            <div class="footer">
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i></a></li> 
-                                </ul>
-                            </div>
-                        </div>
-                    </div> 
                     
                 </div>
                 
@@ -396,64 +319,12 @@
         
         <!-- Footer Section -->
         <footer>
+
+            <section id="contact">
             
             <div class="container text-center">
                 
                 <div class="row">
-                    
-                    <div class="col-sm-12">
-                        <ul class="social list-inline">
-                            <li>
-                                <div>
-                                    <a href="#" class="facebook">
-                                        <i class="fa fa-facebook"></i>
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    <a href="#" class="twitter">
-                                        <i class="fa fa-twitter"></i>
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    <a href="#" class="dribbble">
-                                        <i class="fa fa-dribbble"></i>
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    <a href="#" class="vimeo">
-                                        <i class="fa fa-vimeo-square"></i>
-                                    </a>
-                                </div>
-                            </li> 
-                            <li>
-                                <div>
-                                    <a href="#" class="linkedin">
-                                        <i class="fa fa-linkedin"></i>
-                                    </a>
-                                </div>
-                            </li> 
-                            <li>
-                                <div>
-                                    <a href="#" class="google-plus">
-                                        <i class="fa fa-google-plus"></i>
-                                    </a>
-                                </div>
-                            </li> 
-                            <li>
-                                <div>
-                                    <a href="#" class="youtube">
-                                        <i class="fa fa-youtube"></i>
-                                    </a>
-                                </div>
-                            </li> 
-                        </ul>
-                    </div> 
                     
                     <div class="col-sm-12">
                         <ul class="subnav list-inline">
@@ -480,14 +351,76 @@
                 </div>
                 
             </div>
-        
+        </section>
         </footer>
         <!-- End Footer Section -->
     
         <!-- Scripts Section -->
-        <script src="{{STATIC_URL}}js/jquery.1.10.1.js"></script>
+        <script src="{{STATIC_URL}}js/jquery-2.0.3.js"></script>
         <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
         <script src="{{STATIC_URL}}js/smoothscroll.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+      <script type="text/javascript">
+
+          google.load("search", "1");
+
+          /* google.load("jquery", "1.4.2"); */
+          /* google.load("jqueryui", "1.7.2"); */
+
+        {% if user.is_authenticated %}
+          console.log('loading geo location');
+          navigator.geolocation.getCurrentPosition(GetLocation);
+          function GetLocation(location) {
+              console.log(location.coords.latitude);
+              console.log(location.coords.longitude);
+              console.log(location.coords.accuracy);
+              $("#latitude").html(location.coords.latitude);
+              $("#longitude").html(location.coords.longitude);
+              $(".findFriendButton").show();
+          }
+          {% endif %}
+
+          var load_friends = function(friends){
+            var rows = [];
+            var row_data = "";
+            var f;
+            for (var i = 0; i < friends.length; i++) {
+              f = friends[i];
+              row_data = "<tr>";
+              if (f.provider == 'facebook') {
+                row_data += "<td><img src='http://graph.facebook.com/"+ f.uid +"/picture?width=40&height=40' alt='"+f.firstName+"' class='img-circle' /></td>"
+              } else {
+                row_data += "<td><img src='{{STATIC_URL}}img/WorldAlumni.png' style='width:40px;height:40px;' class='img-circle' /></td>";
+              }
+              row_data += "<td>"+ f.first_name + " "+ f.last_name +"</td>";
+              row_data += "<td>" +f.associated_attendances[0].school + "</td>";
+              row_data += "<td>"+ f.distance +"</td>";
+              row_data += "<td>"+ f.appear_time +"</td>";
+
+              rows.push(row_data);
+            }
+            var html = rows.join();
+            $("#friend-table").html(html);
+          }
+
+          var user_nearby = function(){
+            var latitude =  $("#latitude").html();
+            var longitude =  $("#longitude").html();
+
+            post_params = {
+              'bindingId': {{bindingId}},
+              'longitude': longitude,
+              'latitude': latitude
+            }
+
+            $.post('/api/nearby_users/', post_params).done(function(d){
+              console.log(d);
+              $("#sent_result").html("Your location has been sent to server")
+              load_friends(d);
+            }, 'json');
+
+          }
+      </script>
         <!-- End Scripts Section -->
         
     </body>
