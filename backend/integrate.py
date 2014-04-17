@@ -24,7 +24,7 @@ def get_main_node_id(id):
     
     if m==None:
         # This is a main page, because no window.location.raplace in response
-        print node['id'], node['name'], "is main node" 
+        print node['id'], "is main node" #node['name'],  
         return id
     else:
         redirect_link = m.group('redirect_link')
@@ -37,8 +37,8 @@ def get_main_node_id(id):
 
         main_node = get_node(node_name) # Abuse of function get_node
         main_node_id = main_node['id']
-        print node['id'], node['name'], "'s main node is";
-        print main_node_id, main_node['name']
+        print node['id'], "'s main node is" #node['name'], 
+        print main_node_id #, main_node['name']
         return main_node_id
     
   
@@ -71,7 +71,7 @@ def bind_school_fb(sid):
      
     # A step to compare newly added fb school info to L items.
     
-    
+def bind_school_li()
     
 if __name__ == '__main__':
 
