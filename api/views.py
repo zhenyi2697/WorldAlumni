@@ -206,10 +206,47 @@ def find_associated_bindings(binding):
         for s in ref_schools:
             ads = Attendance.objects.filter(school=s)
             for a in ads:
-                nearby_bindings[a.binding.id] = (a.binding, a)
+                if a.binding.user.id != binding.user.id: ### don't append self into this list
+                    nearby_bindings[a.binding.id] = (a.binding, a)
+
+                    ### uncomment this line if only show one per user
+                    ### nearby_bindings[a.binding.user.id] = (a.binding, a)
 
     return nearby_bindings
 
+def get_nearby_user_data(me, binding, ad):
+
+    nearby_user = binding.user
+
+    provider = binding.bind_from
+    auth_users = UserSocialAuth.objects.filter(user=nearby_user)
+
+    ### if have more than one binding, determine which one is the right good one
+    if len(auth_users) > 1:
+        if provider == auth_users[0].provider:
+            social_auth = auth_users[0]
+        else:
+            social_auth = auth_users[1]
+    else:
+        social_auth = auth_users[0]
+
+    attendances = Attendance.objects.filter(binding=binding)
+    distance, appear_time, longitude, latitude = computeDistance(me, binding)
+    data = {
+            'bindingId': str(binding.id),
+            'uid': str(social_auth.uid),
+            'first_name': nearby_user.first_name,
+            'last_name': nearby_user.last_name,
+            'provider': social_auth.provider,
+            'attendances': attendances,
+            'associated_attendances': [ad],
+            'distance': distance,
+            'appear_time': appear_time,
+            'latitude': latitude,
+            'longitude': longitude
+            }
+
+    return data
 
 @csrf_exempt
 def nearby_users(request):
@@ -218,6 +255,7 @@ def nearby_users(request):
     '''
 
     if request.method == 'POST':
+
         bindingId = request.POST.get('bindingId', '').strip()
         longitude = request.POST.get('longitude', '').strip()
         latitude = request.POST.get('latitude', '').strip()
@@ -237,46 +275,20 @@ def nearby_users(request):
         location.save()
 
         ### get related users and return to clients
-        my_attendances = Attendance.objects.filter(binding=me)
-        nearby_bindings = {}
-        for ma in my_attendances:
-            ref_schools = School.objects.filter(ref=ma.school.ref)
-            for s in ref_schools:
-                ads = Attendance.objects.filter(school=s)
-                for a in ads:
-                    nearby_bindings[a.binding.id] = (a.binding, a)
-
-        print nearby_bindings
+        nearby_bindings = find_associated_bindings(me)
 
         users = []
         for bid, (binding, ad) in nearby_bindings.iteritems():
-            nearby_user = binding.user
-            auth_users = UserSocialAuth.objects.filter(user=nearby_user)
-            social_auth = auth_users[0] ### one user could have two bindings associated with, now get only the first one
-            attendances = Attendance.objects.filter(binding=binding)
-            distance, appear_time, longitude, latitude= computeDistance(me, binding)
-            data = {
-                    'bindingId': str(binding.id),
-                    'uid': str(social_auth.uid),
-                    'first_name': nearby_user.first_name,
-                    'last_name': nearby_user.last_name,
-                    'provider': social_auth.provider,
-                    'attendances': attendances,
-                    'associated_attendances': [ad],
-                    'distance': distance,
-                    'appear_time': appear_time,
-                    'latitude': latitude,
-                    'longitude': longitude
-                    }
-            users.append(data)
+            if me.user.id != binding.user.id:
+                data = get_nearby_user_data(me, binding, ad)
+                users.append(data)
 
         ### sort users by distance
         users.sort(key=lambda x: x['distance'])
 
-        # atts = Attendance.objects.filter(binding=me)
-        # schools = [a.school for a in atts]
-        # for s in schools:
-            # bind_school(s)
+        ### Prepend self to list
+        users.insert(0, get_nearby_user_data(me, me, ad))
+
 
         nearby_serializer = UserNearbySerializer(users, many=True)
         return JSONResponse(nearby_serializer.data)
