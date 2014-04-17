@@ -388,9 +388,9 @@
               f = friends[i];
               row_data = "<tr>";
               if (f.provider == 'facebook') {
-                row_data += "<td><img src='http://graph.facebook.com/"+ f.uid +"/picture?width=40&height=40' alt='"+f.firstName+"' class='img-circle' /></td>"
+                row_data += "<td><img src='http://graph.facebook.com/"+ f.uid +"/picture?width=40&height=40' alt='"+f.firstName+"' class='img-circle' style='widht:40;height:40;' /></td>"
               } else {
-                row_data += "<td><img src='{{STATIC_URL}}img/WorldAlumni.png' style='width:40px;height:40px;' class='img-circle' /></td>";
+                row_data += "<td><img src='{{STATIC_URL}}img/WorldAlumni.png' style='width:40px;height:40px;' class='img-circle'  style='widht:40;height:40;' /></td>";
               }
               row_data += "<td>"+ f.first_name + " "+ f.last_name +"</td>";
               if (f.associated_attendances.length > 0) {
