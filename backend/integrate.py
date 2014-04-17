@@ -33,8 +33,10 @@ def get_main_node_id(id):
         pattern2 = r'www\.facebook\.com\\\/(?P<node_name>.{1,100}?)\?rf'
         m2 = re.search(pattern2, redirect_link)
         node_name =  m2.group('node_name')
-        
-        
+#        rlink2 = redirect_link.replace('www', 'graph')
+#        response = urllib2.urlopen(rlink2)
+#    
+#        main_node = json.loads(response.read())
         main_node = get_node(node_name) # Abuse of function get_node
         main_node_id = main_node['id']
         print node['id'], node['name'], "'s main node is";
@@ -43,7 +45,7 @@ def get_main_node_id(id):
     
 if __name__ == '__main__':
 
-    DEBUG = False
+    DEBUG = True
     school_id = 112517705427268 # ID for Georgia-Institute-of-Technology
     if len(sys.argv)>1:
         school_id = sys.argv[1]
