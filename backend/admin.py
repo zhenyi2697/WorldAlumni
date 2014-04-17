@@ -2,7 +2,7 @@ from django.contrib import admin
 from models import *
 
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'sid', 'fblink', 'ref')
+    list_display = ('id', 'name', 'sid', 'ref')
 
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ('id', 'binding', 'school', 'type', 'attend_year', 'finish_year')
