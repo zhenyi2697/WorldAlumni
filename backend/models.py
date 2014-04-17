@@ -10,7 +10,9 @@ class School(models.Model):
     name = models.CharField(max_length=256)
     sid = models.CharField(max_length=64, null=True, blank=True)
     fblink = models.CharField(max_length=512, null=True, blank=True)
-
+    
+    #li_id = models.CharField(max_length=64, null=True, blank=True)
+    #fb_ref_id = models.CharField(max_length=64, null=True, blank=True)
     ref = models.ForeignKey('self', null=True, blank=True)
 
     class Meta:

@@ -249,6 +249,8 @@ def nearby_users(request):
 
         ### sort users by distance
         users.sort(key=lambda x: x['distance'])
+        
+        
 
         # atts = Attendance.objects.filter(binding=me)
         # schools = [a.school for a in atts]

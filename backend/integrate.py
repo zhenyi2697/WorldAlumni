@@ -2,6 +2,8 @@ import urllib2
 import json
 import re
 import sys
+from backend.models import *
+
 
 def get_node(entry):
     # This function retrieves node information from Facebook Graph API
@@ -27,7 +29,7 @@ def get_main_node_id(id):
         return id
     else:
         redirect_link = m.group('redirect_link')
-        if DEBUG:
+        if False:
             print 'Mateched location.replace script: ', m.group(0)
             print 'Redirect page link: ', redirect_link
         pattern2 = r'www\.facebook\.com\\\/(?P<node_name>.{1,100}?)\?rf'
@@ -42,6 +44,39 @@ def get_main_node_id(id):
         print node['id'], node['name'], "'s main node is";
         print main_node_id, main_node['name']
         return main_node_id
+    
+  
+def bind_school_fb(sid):
+    
+    print 'bind_school_fb called'
+    
+    schools_by_id = School.objects.filter(sid=sid)
+    if schools_by_id.count() != 0:
+        assert(schools_by_id.count() == 1)
+        # No update for school data
+        print 'school found: ', schools_by_id[0].name
+        return schools_by_id[0] 
+    else:   # No existing shcool item
+        print 'new school: '
+        fb_ref_id = get_main_node_id(sid)
+        #if fb_ref_id == sid: # School page is final one
+        new_school_node = get_node(sid)
+        new_school = School(
+                                name = new_school_node['name'],
+                                sid = new_school_node['id'],
+
+                            )   
+        new_school.save()
+        if fb_ref_id == sid:
+            new_school.ref = new_school
+        else:
+            new_school.ref = bind_school_fb(fb_ref_id)   
+        new_school.save()
+        return new_school
+     
+    # A step to compare newly added fb school info to L items.
+    
+    
     
 if __name__ == '__main__':
 
