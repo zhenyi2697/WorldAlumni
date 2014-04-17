@@ -111,7 +111,7 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                                 name=name,
                             )
                     school.save()
-                    print "School created: %s", name
+                    print "School created: ", #name
                 else:
                     school = schools_by_name[0]
 

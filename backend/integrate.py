@@ -18,7 +18,6 @@ def get_main_node_id(id):
     # This function takes in a Facebook page(school, company) ID (its node ID), and finds out if it is the main page, or if it is a duplicate/has been merged to another page. In the latter case, the main page id is returned.
     node = get_node(id)
     content = urllib2.urlopen(node['link']).read()
-    #print type(content)
     # Use regular expression to locate redirect link
     pattern = r'window.location.replace\(\"(?P<redirect_link>.{1,100}?)\"\);\<\/script\>' # script to 'redirect' merged page
     m = re.search(pattern, content)
@@ -35,10 +34,7 @@ def get_main_node_id(id):
         pattern2 = r'www\.facebook\.com\\\/(?P<node_name>.{1,100}?)\?rf'
         m2 = re.search(pattern2, redirect_link)
         node_name =  m2.group('node_name')
-#        rlink2 = redirect_link.replace('www', 'graph')
-#        response = urllib2.urlopen(rlink2)
-#    
-#        main_node = json.loads(response.read())
+
         main_node = get_node(node_name) # Abuse of function get_node
         main_node_id = main_node['id']
         print node['id'], node['name'], "'s main node is";
@@ -54,12 +50,11 @@ def bind_school_fb(sid):
     if schools_by_id.count() != 0:
         assert(schools_by_id.count() == 1)
         # No update for school data
-        print 'school found: ', schools_by_id[0].name
+        print 'school found: ', #schools_by_id[0].name
         return schools_by_id[0] 
     else:   # No existing shcool item
         print 'new school: '
         fb_ref_id = get_main_node_id(sid)
-        #if fb_ref_id == sid: # School page is final one
         new_school_node = get_node(sid)
         new_school = School(
                                 name = new_school_node['name'],
