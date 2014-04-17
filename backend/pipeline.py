@@ -4,6 +4,8 @@ from social_auth.models import UserSocialAuth
 
 from backend.models import *
 
+import integrate
+
 FACEBOOK_PROVIDER='facebook'
 LINKEDIN_PROVIDER='linkedin-oauth2'
 
@@ -17,7 +19,11 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
         print '  '
         print s
         print '  '
-
+    
+#    import parseli
+#    print 'parseli'
+#    print parseli.getli('www.linkedin.com/pub/yang-guo/41/770/80')
+        
     if user:
         print "is user == True"
         facebook_binding = Binding.objects.filter(user=user, bind_from=FACEBOOK_PROVIDER)
@@ -44,26 +50,32 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
 
             ## profile schools if they do not exist
             for s in response.get('education'):
-
-                name = s['school']['name']
-                sid = s['school']['id']
-                schools_by_id = School.objects.filter(sid=sid)
-                schools_by_name = School.objects.filter(name=name)
-                if schools_by_id.count() == 0 and schools_by_name.count() == 0:
-                    school = School(
-                                name=name,
-                                sid=sid,
-                            )
-                    school.save()
-                else:
-                    if schools_by_id.count() != 0:
-                        school = schools_by_id[0]
-                    else:
-                        school = schools_by_name[0]
-                        school.sid = sid
-                        school.save()
+                
+                #print len(response.get('education'))
+    #                name = s['school']['name']
+    #                sid = s['school']['id']
+    #                schools_by_id = School.objects.filter(sid=sid)
+    #                schools_by_name = School.objects.filter(name=name)
+    #                if schools_by_id.count() == 0 and schools_by_name.count() == 0:
+    #                    school = School(
+    #                                name=name,
+    #                                sid=sid,
+    #                            )
+    #                    bind_school_fb(sid)
+    #                    #school.save()
+    #                    
+    #                else:
+    #                    if schools_by_id.count() != 0:
+    #                        school = schools_by_id[0]
+    #                    else:
+    #                        school = schools_by_name[0]
+    #                        school.sid = sid
+    #                        school.save()
 
                 ### create Attendance entry for this binding
+                sid = s['school']['id']
+                school = integrate.bind_school_fb(sid)
+                #print school
                 year = s.get('year', {}).get('name', '')
 
                 attendance = Attendance(
@@ -99,7 +111,7 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                                 name=name,
                             )
                     school.save()
-                    print "School created: %s", name
+                    print "School created: ", #name
                 else:
                     school = schools_by_name[0]
 
