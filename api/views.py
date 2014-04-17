@@ -225,7 +225,7 @@ def nearby_users(request):
         my_attendances = Attendance.objects.filter(binding=me)
         nearby_bindings = {}
         for ma in my_attendances:
-            ref_schools = School.objects.filter(ref=ma.school)
+            ref_schools = School.objects.filter(ref=ma.school.ref)
             for s in ref_schools:
                 ads = Attendance.objects.filter(school=s)
                 for a in ads:
