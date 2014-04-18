@@ -332,7 +332,7 @@ def user_settings(request, pk):
             binding = None
 
         if binding:
-            user_settings = UserSetting.objects.filter(binding=binding)
+            user_settings = UserSetting.objects.filter(user=binding.user)
             entries = []
             for s in user_settings:
                 data = {
@@ -353,8 +353,10 @@ def user_settings(request, pk):
         entryId = request.POST.get('entryId', '').strip()
         value = request.POST.get('value', '').strip()
 
+        binding = Binding.objects.get(id=bindingId)
+
         try:
-            s = UserSetting.objects.get(binding=bindingId, entry=entryId)
+            s = UserSetting.objects.get(user=binding.user, entry=entryId)
         except UserSetting.DoesNotExist:
             s = None
 
@@ -367,7 +369,7 @@ def user_settings(request, pk):
             binding = Binding.objects.get(id=bindingId)
             entry = SettingEntry.objects.get(id=entryId)
             s = UserSetting(
-                    binding=binding,
+                    user=binding.user,
                     entry=entry,
                     value=int(value)
                     )

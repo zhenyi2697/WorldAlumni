@@ -24,7 +24,7 @@ INVISIBLE_ENTRY = 2
 def is_invisible(binding):
     invisible = 0
     try:
-        invisible_setting = UserSetting.objects.get(binding=binding, entry=INVISIBLE_ENTRY)
+        invisible_setting = UserSetting.objects.get(user=binding.user, entry=INVISIBLE_ENTRY)
         if invisible_setting.value == 1:
             invisible = 1
     except UserSetting.DoesNotExist:
@@ -34,7 +34,7 @@ def is_invisible(binding):
 def is_distance_only(binding):
     distance_only = 0
     try:
-        distance_only_setting = UserSetting.objects.get(binding=binding, entry=DISTANCE_ONLY_ENTRY)
+        distance_only_setting = UserSetting.objects.get(user=binding.user, entry=DISTANCE_ONLY_ENTRY)
         if distance_only_setting.value == 1:
             distance_only = 1
     except UserSetting.DoesNotExist:

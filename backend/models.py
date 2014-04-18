@@ -104,7 +104,7 @@ class SettingEntry(models.Model):
 
 class UserSetting(models.Model):
 
-    binding = models.ForeignKey(Binding)
+    user = models.ForeignKey(User)
     entry = models.ForeignKey(SettingEntry)
     value = models.IntegerField(default=0, blank=True, null=True)
 
@@ -113,5 +113,5 @@ class UserSetting(models.Model):
         verbose_name_plural = 'UserSettings'
 
     def __unicode__(self):
-        return str(self.binding.id) + u" " + self.entry.name
+        return str(self.user.id) + u" " + self.entry.name
 

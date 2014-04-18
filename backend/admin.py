@@ -26,7 +26,7 @@ class SettingEntryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
 
 class UserSettingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'binding', 'entry', 'value')
+    list_display = ('id', 'user', 'entry', 'value')
 
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Attendance, AttendanceAdmin)
