@@ -25,13 +25,7 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
     print "Details: %s", details
     print "Response is: %s", response
     for s in response.get('educations', {}).get('values',[]):
-        print '  '
-        print s
-        print '  '
-    
-#    import parseli
-#    print 'parseli'
-#    print parseli.getli('www.linkedin.com/pub/yang-guo/41/770/80')
+        print '  ', s ' '
         
     if user:
         print "is user == True"
@@ -66,11 +60,11 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                 if schools_by_id.count() != 0:
                     assert(schools_by_id.count() == 1)
                     # No update for school data
-                    print 'school found: ', schools_by_id[0].name
+                    print 'school found: '#, schools_by_id[0].name
                     school = schools_by_id[0]
 
                 else:   # No existing shcool item
-                    print 'new school: ', name
+                    print 'new school: '#, name
                     school = School(
                                             name = name,
                                             sid = sid,

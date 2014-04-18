@@ -87,11 +87,11 @@ class fb_ref(threading.Thread):
         new_school.save()
         new_school.ref = new_school
         new_school.save()
-        print 'new ref school created:', new_school.name
+        print 'new ref school created:'#, new_school.name
         return new_school
         
     def run(self): #Overwrite run() method, put what you want the thread do here  
-        print 'integration thread called', self.school.name
+        print 'integration thread called'#, self.school.name
 
         fb_ref_id = get_main_node_id(self.school.sid)
         
