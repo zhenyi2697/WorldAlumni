@@ -32,7 +32,7 @@ def get_main_node_id(id):
         if False:
             print 'Mateched location.replace script: ', m.group(0)
             print 'Redirect page link: ', redirect_link
-        pattern2 = r'www\.facebook\.com\\\/(?P<node_name>.{1,100}?)\?rf'
+        pattern2 = r'\\\/(?P<node_name>[^\/]{1,100}?)\?rf'
         m2 = re.search(pattern2, redirect_link)
         node_name =  m2.group('node_name')
 
