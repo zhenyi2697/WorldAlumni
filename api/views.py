@@ -275,7 +275,7 @@ def nearby_users(request):
                 )
         location.save()
 
-        ### get related users and return to clients
+        ### get associated bindings (except self) and return to clients
         nearby_bindings = find_associated_bindings(me)
 
         users = []
