@@ -327,9 +327,6 @@ def user_settings(request, pk):
 
     elif request.method == 'POST':
 
-        print request.POST.get('bindingId', None)
-        print request.POST.get('value', None)
-
         bindingId = request.POST.get('bindingId', '').strip()
         entryId = request.POST.get('entryId', '').strip()
         value = request.POST.get('value', '').strip()
