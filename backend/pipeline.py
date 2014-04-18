@@ -152,4 +152,5 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                     attendance.save()
                 
             # Asynchronously update school information
-                # call update(schools)
+            thread2 = integrate.li_update_school(schools)
+            thread2.start()   
