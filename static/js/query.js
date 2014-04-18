@@ -17,7 +17,7 @@
         row_data += "<td><img src='http://graph.facebook.com/"+ f.uid +"/picture?width=40&height=40' alt='"+f.firstName+"' class='img-circle friend-thumbnail'/></td>"
         row_data += "<td><a href='http://www.facebook.com/"+ f.uid  +"' target='_blank'>"+ f.first_name + " "+ f.last_name +"</a></td>";
       } else {
-        row_data += "<td><img src='{{STATIC_URL}}img/WorldAlumni.png' style='width:40px;height:40px;' class='img-circle friend-thumbnail' /></td>";
+        row_data += "<td><img src='/static/img/WorldAlumni.png' style='width:40px;height:40px;' class='img-circle friend-thumbnail' /></td>";
         row_data += "<td>"+ f.first_name + " "+ f.last_name +"</td>";
       }
 
