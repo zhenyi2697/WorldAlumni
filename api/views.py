@@ -13,10 +13,8 @@ from rest_framework.parsers import JSONParser
 from social_auth.models import UserSocialAuth
 
 from backend.models import *
+from backend.views import is_invisible, is_distance_only
 from api.serializers import *
-
-DISTANCE_ONLY_ENTRY = 1
-INVISIBLE_ENTRY = 2
 
 class JSONResponse(HttpResponse):
     """
@@ -229,13 +227,8 @@ def get_nearby_user_data(me, binding, ad):
 
     ### if invisible setting is True, then just return None
     if me.id != binding.id:
-        invisible = False
-        try:
-            invisible_setting = UserSetting.objects.get(binding=binding, entry=INVISIBLE_ENTRY)
-            if invisible_setting.value == 1:
-                invisible = True
-        except UserSetting.DoesNotExist:
-            pass
+
+        invisible = is_invisible(binding)
 
         if invisible:
             return None
@@ -257,13 +250,7 @@ def get_nearby_user_data(me, binding, ad):
     attendances = Attendance.objects.filter(binding=binding)
 
     ### check if is distance_only == True
-    distance_only = False
-    try:
-        distance_only_setting = UserSetting.objects.get(binding=binding, entry=DISTANCE_ONLY_ENTRY)
-        if distance_only_setting.value == 1:
-            distance_only = True
-    except UserSetting.DoesNotExist:
-        pass
+    distance_only = is_distance_only(binding)
 
     distance, appear_time, longitude, latitude = computeDistance(me, binding, distance_only)
 

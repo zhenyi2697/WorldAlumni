@@ -92,9 +92,13 @@
                       <p class="text-large" > Welcom back, {{user.username}} !
                         <br/>
                         <span class="text-medium">Your current coordinate is: <span id="latitude"></span>, <span id="longitude"></span></span>
-                        <br/>
-                        <br/>
-                        <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();" style="display:none;">Find nearby friends</a>
+                        <div style="margin-top:-20px;display:none;" class="find-friend-div">
+                          <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();">Find nearby friends</a>
+                          </br>
+                          </br>
+                          <input id="distance_only_input" type="checkbox" {%if distance_only%}checked{%endif%} onclick="updateSetting(1);" > Distance Only
+                          <input id="invisible_input" type="checkbox" {%if invisible%}checked{%endif%} onclick="updateSetting(2);"> Invisible Mode
+                        </div>
                       </p>
 
                         <a href="/logout/" style="color:white;"><i class="fa fa-sign-out"></i>Logout</a>
@@ -212,7 +216,10 @@
                           <p class="text-large section-color-2">
                               Here is the list of your nearby schoolmates
                               </br>
-                            <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();" style="display:none;">Find nearby friends</a>
+                              <div style="margin-top:-20px;display:none;" class="find-friend-div">
+                                <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();">Find nearby friends</a>
+                                </br>
+                              </div>
                           </p>
                           <div class="row">
                             <div class="col-md-10 col-md-offset-1">
@@ -376,9 +383,8 @@
                 console.log(location.coords.accuracy);
                 $("#latitude").html(location.coords.latitude);
                 $("#longitude").html(location.coords.longitude);
-                $(".findFriendButton").show();
+                $(".find-friend-div").show();
             }
-            {% endif %}
 
             var load_friends = function(friends){
               var rows = [];
@@ -428,6 +434,42 @@
               }, 'json');
 
             }
+
+            var updateSetting = function(entryId){
+
+              var value = 0;
+              if (entryId == 1) {
+
+                if($("#distance_only_input").is(':checked') ) {
+                  value = 1;
+                } else {
+                  value = 0;
+                }
+
+              } else if (entryId == 2) {
+
+                if( $("#invisible_input").is(':checked') ) {
+                  value = 1;
+                } else {
+                  value = 0;
+                }
+
+              }
+
+              post_params = {
+                'bindingId': {{bindingId}},
+                'entryId': entryId,
+                'value': value
+              }
+
+              $.post('/api/{{bindingId}}/settings/', post_params).done(function(d){
+                console.log(d);
+              }, 'json');
+
+            }
+
+
+          {% endif %}
         </script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
