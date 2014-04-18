@@ -296,3 +296,69 @@ def nearby_users(request):
         nearby_serializer = UserNearbySerializer(users, many=True)
         return JSONResponse(nearby_serializer.data)
 
+
+@csrf_exempt
+def user_settings(request, pk):
+    '''
+    get list of  user settings or changea setting value
+    '''
+
+    if request.method == 'GET':
+        try:
+            binding = Binding.objects.get(id=pk)
+        except Binding.DoesNotExist:
+            binding = None
+
+        if binding:
+            user_settings = UserSetting.objects.filter(binding=binding)
+            entries = []
+            for s in user_settings:
+                data = {
+                        'eid': s.entry.id,
+                        'name': s.entry.name,
+                        'value': s.value,
+                        }
+                entries.append(data)
+
+            serializer = UserSettingSerializer(entries, many=True)
+            return JSONResponse(serializer.data)
+        else:
+            return JSONResponse([])
+
+    elif request.method == 'POST':
+
+        print request.POST.get('bindingId', None)
+        print request.POST.get('value', None)
+
+        bindingId = request.POST.get('bindingId', '').strip()
+        entryId = request.POST.get('entryId', '').strip()
+        value = request.POST.get('value', '').strip()
+
+        try:
+            s = UserSetting.objects.get(binding=bindingId, entry=entryId)
+        except UserSetting.DoesNotExist:
+            s = None
+
+        if s:
+            ### found existing entry, update it
+            s.value = int(value)
+            s.save()
+        else:
+            ### no entry found, just create a new entry with requested value
+            binding = Binding.objects.get(id=bindingId)
+            entry = SettingEntry.objects.get(id=entryId)
+            s = UserSetting(
+                    binding=binding,
+                    entry=entry,
+                    value=int(value)
+                    )
+            s.save()
+
+        data = {
+                'eid': s.entry.id,
+                'name': s.entry.name,
+                'value': s.value,
+                }
+        serializer = UserSettingSerializer(data)
+        return JSONResponse(serializer.data)
+

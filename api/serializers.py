@@ -45,6 +45,19 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = ('id', 'binding', 'latitude', 'longitude', 'create_time', 'expire_time')
 
+
+class SettingEntrySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SettingEntry
+        fields = ('id', 'name')
+
+class UserSettingSerializer(serializers.Serializer):
+
+    eid = serializers.CharField(max_length=200)
+    name = serializers.CharField(max_length=200)
+    value = serializers.CharField(max_length=20)
+
 class UserNearbySerializer(serializers.Serializer):
     bindingId = serializers.CharField(max_length=200)
     uid = serializers.CharField(max_length=200)
