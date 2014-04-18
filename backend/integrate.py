@@ -102,7 +102,7 @@ class fb_ref(threading.Thread):
             if schools_by_id.count() != 0:
                 self.school.ref = schools_by_id[0]
             else:
-                self.school.ref = self.new_ref_school(fb_ref_id)
+                self.school.ref = self.new_ref_school(fb_ref_id).ref
         self.school.save()
         return self.school
 
