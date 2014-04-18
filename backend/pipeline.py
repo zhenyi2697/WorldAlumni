@@ -60,6 +60,35 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
             ## profile schools if they do not exist
             for s in response.get('education'):
                 
+                sid = s['school']['id']
+                name = s['school']['name']
+                schools_by_id = School.objects.filter(sid=sid)
+                if schools_by_id.count() != 0:
+                    assert(schools_by_id.count() == 1)
+                    # No update for school data
+                    print 'school found: ', schools_by_id[0].name
+                    school = schools_by_id[0]
+
+                else:   # No existing shcool item
+                    print 'new school: ', name
+                    school = School(
+                                            name = name,
+                                            sid = sid,
+                                        )   
+                    school.save()
+                    t1 = integrate.fb_ref(school)
+                    t1.start() 
+                 
+                #print school
+                year = s.get('year', {}).get('name', '')
+
+                attendance = Attendance(
+                                binding=binding,
+                                school=school,
+                                type=s.get('type', ''),
+                                attend_year=year
+                        )
+                attendance.save()
                 #print len(response.get('education'))
     #                name = s['school']['name']
     #                sid = s['school']['id']
@@ -81,19 +110,8 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
     #                        school.sid = sid
     #                        school.save()
 
-                ### create Attendance entry for this binding
-                sid = s['school']['id']
-                school = integrate.bind_school_fb(sid)
-                #print school
-                year = s.get('year', {}).get('name', '')
 
-                attendance = Attendance(
-                                binding=binding,
-                                school=school,
-                                type=s.get('type', ''),
-                                attend_year=year
-                        )
-                attendance.save()
+
 
         if strategy.backend.__class__.__name__ == 'LinkedinOAuth2' and linkedin_binding.count() == 0:
             social_auth = UserSocialAuth.objects.get(user=user, provider=LINKEDIN_PROVIDER)

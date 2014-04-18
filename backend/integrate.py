@@ -3,6 +3,8 @@ import urllib2
 import json
 import re
 import sys
+import threading  
+
 from backend.models import *
 
 
@@ -71,6 +73,39 @@ def bind_school_fb(sid):
         return new_school
      
     # A step to compare newly added fb school info to L items.
+
+class fb_ref(threading.Thread):
+    def __init__(self, school):  
+        threading.Thread.__init__(self)  
+        self.school = school
+    def new_ref_school(self, sid):
+        new_school_node = get_node(sid)
+        new_school = School(
+                                name = new_school_node['name'],
+                                sid = new_school_node['id'],
+                            )
+        new_school.save()
+        new_school.ref = new_school
+        new_school.save()
+        print 'new ref school created:', new_school.name
+        return new_school
+        
+    def run(self): #Overwrite run() method, put what you want the thread do here  
+        print 'integration thread called', self.school.name
+
+        fb_ref_id = get_main_node_id(self.school.sid)
+        
+        if fb_ref_id == self.school.sid:
+            self.school.ref = self.school
+        else:
+            schools_by_id = School.objects.filter(sid=fb_ref_id)
+            if schools_by_id.count() != 0:
+                self.school.ref = schools_by_id[0]
+            else:
+                self.school.ref = self.new_ref_school(fb_ref_id)
+        self.school.save()
+        return self.school
+    
     
 def bind_school_li():
     
