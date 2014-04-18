@@ -90,3 +90,28 @@ class Location(models.Model):
 
     def __unicode__(self):
         return  self.latitude + self.longitude
+
+class SettingEntry(models.Model):
+
+    name = models.CharField(max_length=128)
+
+    class Meta:
+        verbose_name = 'SettingEntry'
+        verbose_name_plural = 'SettingEntries'
+
+    def __unicode__(self):
+        return self.name
+
+class UserSetting(models.Model):
+
+    binding = models.ForeignKey(Binding)
+    entry = models.ForeignKey(SettingEntry)
+    value = models.IntegerField(default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'UserSetting'
+        verbose_name_plural = 'UserSettings'
+
+    def __unicode__(self):
+        return self.binding.id + u" " + self.entry.name
+

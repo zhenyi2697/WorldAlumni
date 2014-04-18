@@ -16,8 +16,16 @@ class ProfileAdmin(admin.ModelAdmin):
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('id', 'binding', 'latitude', 'longitude', 'create_time', 'expire_time')
 
+class SettingEntryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+class UserSettingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'binding', 'entry', 'value')
+
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(Binding, BindingAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Location, LocationAdmin)
+admin.site.register(SettingEntry, SettingEntryAdmin)
+admin.site.register(UserSetting, UserSettingAdmin)
