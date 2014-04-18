@@ -23,8 +23,15 @@ def home(request):
     bindingId = '-1'
     if request.user.is_authenticated():
         bindings = request.user.binding_set.all()
-        if len(bindings) > 0:
+        if len(bindings) == 0:
+            bindingId = '-1'
+        elif len(bindings) == 1:
             bindingId = bindings[0].id
+        elif len(bindings) == 2:
+            if bindings[0].bind_from == 'facebook': ### if two bindings, find the one with facebook
+                bindingId = bindings[0].id
+            else:
+                bindingId = bindings[1].id
 
     return render(request, 'home.html', {'bindingId': bindingId})
 
