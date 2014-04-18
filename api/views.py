@@ -232,6 +232,7 @@ def get_nearby_user_data(me, binding, ad):
 
     attendances = Attendance.objects.filter(binding=binding)
     distance, appear_time, longitude, latitude = computeDistance(me, binding)
+
     data = {
             'bindingId': str(binding.id),
             'uid': str(social_auth.uid),
@@ -278,16 +279,18 @@ def nearby_users(request):
         nearby_bindings = find_associated_bindings(me)
 
         users = []
+        last_ad = None
         for bid, (binding, ad) in nearby_bindings.iteritems():
             if me.user.id != binding.user.id:
                 data = get_nearby_user_data(me, binding, ad)
                 users.append(data)
+                last_ad = ad
 
         ### sort users by distance
         users.sort(key=lambda x: x['distance'])
 
         ### Prepend self to list
-        users.insert(0, get_nearby_user_data(me, me, ad))
+        users.insert(0, get_nearby_user_data(me, me, last_ad))
 
 
         nearby_serializer = UserNearbySerializer(users, many=True)
