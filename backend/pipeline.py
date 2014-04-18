@@ -70,8 +70,8 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                                             sid = sid,
                                         )   
                     school.save()
-                    t1 = integrate.fb_ref(school)
-                    t1.start() 
+                    fb_th = integrate.fb_ref(school)
+                    fb_th.start() 
                  
                 #print school
                 year = s.get('year', {}).get('name', '')
@@ -83,30 +83,7 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                                 attend_year=year
                         )
                 attendance.save()
-                #print len(response.get('education'))
-    #                name = s['school']['name']
-    #                sid = s['school']['id']
-    #                schools_by_id = School.objects.filter(sid=sid)
-    #                schools_by_name = School.objects.filter(name=name)
-    #                if schools_by_id.count() == 0 and schools_by_name.count() == 0:
-    #                    school = School(
-    #                                name=name,
-    #                                sid=sid,
-    #                            )
-    #                    bind_school_fb(sid)
-    #                    #school.save()
-    #                    
-    #                else:
-    #                    if schools_by_id.count() != 0:
-    #                        school = schools_by_id[0]
-    #                    else:
-    #                        school = schools_by_name[0]
-    #                        school.sid = sid
-    #                        school.save()
-
-
-
-
+               
         if strategy.backend.__class__.__name__ == 'LinkedinOAuth2' and linkedin_binding.count() == 0:
             social_auth = UserSocialAuth.objects.get(user=user, provider=LINKEDIN_PROVIDER)
             ## create binding
@@ -126,15 +103,19 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
             for s in response.get('educations', {}).get('values',[]):
 
                 name = s.get('schoolName')
-                schools_by_name = School.objects.filter(name=name) ## This is only a very simple integration
+                schools_by_name = School.objects.filter(name=name, sid = None) ## This is only a very simple integration
                 if schools_by_name.count() == 0:
                     school = School(
                                 name=name,
                             )
                     school.save()
                     print "School created: ", #name
+                    li_th = integrate.li_ref(school, binding)
+                    li_th.start()                     
                 else:
                     school = schools_by_name[0]
+                    li_th2 = integrate.li_ref(school, binding)
+                    li_th2.start() 
 
                 ### create Attendance entry
                 attend_year = s.get('startDate', {}).get('year', '')

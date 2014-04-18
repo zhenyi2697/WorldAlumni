@@ -91,7 +91,7 @@ class fb_ref(threading.Thread):
         return new_school
         
     def run(self): #Overwrite run() method, put what you want the thread do here  
-        print 'integration thread called'#, self.school.name
+        print 'FB integration thread called'#, self.school.name
 
         fb_ref_id = get_main_node_id(self.school.sid)
         
@@ -105,12 +105,42 @@ class fb_ref(threading.Thread):
                 self.school.ref = self.new_ref_school(fb_ref_id)
         self.school.save()
         return self.school
+
+def compare_school_name(li_school, fb_schools):
+    li_str = li_school.name.lower()
+    li_school.ref = li_school
+
+    for school in fb_schools:
+        fb_str = school.name.lower()
+        print 'school strings to compare: '#, li_str, fb_str
+        if (li_str in fb_str) or (fb_str in li_str):
+            li_school.ref = school.ref
+            print 'find fb ref school: '#, school.name
+    li_school.save()
+    return li_school
     
-    
-def bind_school_li():
-    
-    pass
-    
+class li_ref(threading.Thread):
+    def __init__(self, school, binding):
+        threading.Thread.__init__(self)  
+        self.school = school
+        self.binding = binding
+    def run(self):
+        print 'LI integration thread called'#, self.school.name
+        if (self.school.ref == None) or (self.school.ref.sid == None):
+            if self.binding.user != 'admin':     # Leave for admin routine
+                fb_bindings = Binding.objects.filter(user = self.binding.user, bind_from = 'facebook ')
+                if fb_bindings.count() == 1:    # Compare with same user Fb data
+                    fb_binding = fb_bindings[0]
+                    attendances = Attendance.objects.filter(binding = fb_binding)
+                    schools = [att.school for att in attendances]
+                    ref_school = compare_school_name(self.school, schools)
+                else:               # Compare to all fb school data
+                    schools = School.objects.exclude(sid = None)
+                    ref_school = compare_school_name(self.school, schools)
+        return self.school
+                
+        
+
 if __name__ == '__main__':
 
     DEBUG = True
