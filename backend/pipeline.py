@@ -25,7 +25,7 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
     print "Details: %s", details
     print "Response is: %s", response
     for s in response.get('educations', {}).get('values',[]):
-        print '  ', s ' '
+        print '  ', s, ' '
         
     if user:
         print "is user == True"
