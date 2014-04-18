@@ -29,9 +29,9 @@ def home(request):
             bindingId = bindings[0].id
         elif len(bindings) == 2:
             if bindings[0].bind_from == 'facebook': ### if two bindings, find the one with facebook
-                bindingId = binding[0].id
+                bindingId = bindings[0].id
             else:
-                bindingId = binding[1].id
+                bindingId = bindings[1].id
 
     return render(request, 'home.html', {'bindingId': bindingId})
 
