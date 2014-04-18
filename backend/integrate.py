@@ -45,6 +45,100 @@ def get_main_node_id(id):
         return main_node_id
     
   
+
+     
+
+class fb_update_school(threading.Thread):
+    def __init__(self, schools):  
+        threading.Thread.__init__(self)  
+        self.schools = schools
+    def new_ref_school(self, sid):
+        new_school_node = get_node(sid)
+        new_school = School(
+                                name = new_school_node['name'],
+                                sid = new_school_node['id'],
+                            )
+        new_school.save()
+        new_school.ref = new_school
+        new_school.save()
+        print 'new ref school created:'#, new_school.name
+        return new_school
+    def suggest_merge(self, school):
+        suggestions = School.objects.filter(name__iexact = school.name)
+        sch_node = get_node(school.sid)
+        for sug_school in suggestions:
+            sug_node = get_node( sug_school.sid )
+            if sug_node['likes'] > 2* sch_node['likes']:
+                school.ref = sug_school.ref
+        return school
+    def update_school(self, school): 
+        print 'FB integration thread called'#, school.name
+        if school.ref == None:
+            fb_ref_id = get_main_node_id(school.sid)
+
+            if fb_ref_id == school.sid:
+                school.ref = school
+            else:
+                schools_by_id = School.objects.filter(sid=fb_ref_id)
+                if schools_by_id.count() != 0:
+                    school.ref = schools_by_id[0]
+                else:
+                    school.ref = self.new_ref_school(fb_ref_id).ref
+            if school.ref == school:
+                school = self.suggest_merge(school)
+            school.save()
+            return school
+    def run(self):
+        for school in self.schools:
+            self.update_school(school)
+        
+
+def compare_school_name(li_school, fb_schools):
+    li_str = li_school.name.lower()
+    li_school.ref = li_school
+
+    for school in fb_schools:
+        fb_str = school.name.lower()
+        print 'school strings to compare: '#, li_str, fb_str
+        if (li_str in fb_str) or (fb_str in li_str):
+            li_school.ref = school.ref
+            print 'find fb ref school: '#, school.name
+    li_school.save()
+    return li_school
+    
+class li_update_school(threading.Thread):
+    def __init__(self, schools):
+        threading.Thread.__init__(self)  
+        self.schools = schools
+        #self.binding = binding
+    def update_school(self, school):
+        print 'LI integration thread called'#, self.school.name
+        if (school.ref == None) or (school.ref.sid == None):
+            # Compare to all fb school data
+            comp_schools = School.objects.exclude(sid = None)
+            ref_school = compare_school_name(school, comp_schools)
+        return school
+        
+        
+    def run(self):
+        for school in self.schools:
+            self.update_school(school)
+    def run2(self): #deprecated
+        print 'LI integration thread called'#, self.school.name
+        if (self.school.ref == None) or (self.school.ref.sid == None):
+            if self.binding.user != 'admin':     # Leave for admin routine
+                fb_bindings = Binding.objects.filter(user = self.binding.user, bind_from = 'facebook ')
+                if fb_bindings.count() == 2:    # Compare with same user Fb data
+                    fb_binding = fb_bindings[0]
+                    attendances = Attendance.objects.filter(binding = fb_binding)
+                    schools = [att.school for att in attendances]
+                    ref_school = compare_school_name(self.school, schools)
+                else:               # Compare to all fb school data
+                    schools = School.objects.exclude(sid = None)
+                    ref_school = compare_school_name(self.school, schools)
+        return self.school
+                
+        
 def bind_school_fb(sid):
     
     print 'bind_school_fb called'
@@ -71,76 +165,8 @@ def bind_school_fb(sid):
             new_school.ref = bind_school_fb(fb_ref_id)   
         new_school.save()
         return new_school
-     
-    # A step to compare newly added fb school info to L items.
-
-class fb_ref(threading.Thread):
-    def __init__(self, school):  
-        threading.Thread.__init__(self)  
-        self.school = school
-    def new_ref_school(self, sid):
-        new_school_node = get_node(sid)
-        new_school = School(
-                                name = new_school_node['name'],
-                                sid = new_school_node['id'],
-                            )
-        new_school.save()
-        new_school.ref = new_school
-        new_school.save()
-        print 'new ref school created:'#, new_school.name
-        return new_school
-        
-    def run(self): #Overwrite run() method, put what you want the thread do here  
-        print 'FB integration thread called'#, self.school.name
-
-        fb_ref_id = get_main_node_id(self.school.sid)
-        
-        if fb_ref_id == self.school.sid:
-            self.school.ref = self.school
-        else:
-            schools_by_id = School.objects.filter(sid=fb_ref_id)
-            if schools_by_id.count() != 0:
-                self.school.ref = schools_by_id[0]
-            else:
-                self.school.ref = self.new_ref_school(fb_ref_id).ref
-        self.school.save()
-        return self.school
-
-def compare_school_name(li_school, fb_schools):
-    li_str = li_school.name.lower()
-    li_school.ref = li_school
-
-    for school in fb_schools:
-        fb_str = school.name.lower()
-        print 'school strings to compare: '#, li_str, fb_str
-        if (li_str in fb_str) or (fb_str in li_str):
-            li_school.ref = school.ref
-            print 'find fb ref school: '#, school.name
-    li_school.save()
-    return li_school
     
-class li_ref(threading.Thread):
-    def __init__(self, school, binding):
-        threading.Thread.__init__(self)  
-        self.school = school
-        self.binding = binding
-    def run(self):
-        print 'LI integration thread called'#, self.school.name
-        if (self.school.ref == None) or (self.school.ref.sid == None):
-            if self.binding.user != 'admin':     # Leave for admin routine
-                fb_bindings = Binding.objects.filter(user = self.binding.user, bind_from = 'facebook ')
-                if fb_bindings.count() == 1:    # Compare with same user Fb data
-                    fb_binding = fb_bindings[0]
-                    attendances = Attendance.objects.filter(binding = fb_binding)
-                    schools = [att.school for att in attendances]
-                    ref_school = compare_school_name(self.school, schools)
-                else:               # Compare to all fb school data
-                    schools = School.objects.exclude(sid = None)
-                    ref_school = compare_school_name(self.school, schools)
-        return self.school
-                
-        
-
+    
 if __name__ == '__main__':
 
     DEBUG = True

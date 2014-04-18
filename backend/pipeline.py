@@ -2,7 +2,7 @@
 import datetime
 
 from social_auth.models import UserSocialAuth
-
+from django.core.exceptions import ObjectDoesNotExist
 from backend.models import *
 
 import integrate
@@ -29,29 +29,33 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
         
     if user:
         print "is user == True"
-        facebook_binding = Binding.objects.filter(user=user, bind_from=FACEBOOK_PROVIDER)
-        linkedin_binding = Binding.objects.filter(user=user, bind_from=LINKEDIN_PROVIDER)
-
-        ### is new user, so we should create bindling object and associated user profile
-        if strategy.backend.__class__.__name__ == 'FacebookOAuth2' and facebook_binding.count() == 0:
-
+        
+        if strategy.backend.__class__.__name__ == 'FacebookOAuth2':
+             
             social_auth = UserSocialAuth.objects.get(user=user, provider=FACEBOOK_PROVIDER)
+            facebook_binding = Binding.objects.filter(user=user, bind_from=FACEBOOK_PROVIDER)
+            ### is new user, so we should create binding object and associated user profile
+            if facebook_binding.count() == 0:
 
-            ## create binding
-            print "creating binding"
-            binding = Binding(user=user,
-                              bind_from='facebook',
-                             )
-            binding.save()
+                ## create binding
+                print "creating binding"
+                binding = Binding(user=user,
+                                  bind_from='facebook',
+                                 )
+                binding.save()
 
-            ## create profile
-            print "creating profile"
-            profile = Profile(binding=binding,
-                              gender=response.get('gender', 'male'),
-                             )
-            profile.save()
-
-            ## profile schools if they do not exist
+                ## create profile
+                print "creating profile"
+                profile = Profile(binding=binding,
+                                  gender=response.get('gender', 'male'),
+                                 )
+                profile.save()
+            else:
+                assert( facebook_binding.count() == 1 )
+                binding = facebook_binding[0]   # For use in attendances
+                
+            ## Check for schools, then attendances
+            schools = []
             for s in response.get('education'):
                 
                 sid = s['school']['id']
@@ -70,36 +74,51 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                                             sid = sid,
                                         )   
                     school.save()
-                    fb_th = integrate.fb_ref(school)
-                    fb_th.start() 
-                 
-                #print school
-                year = s.get('year', {}).get('name', '')
-
-                attendance = Attendance(
+#                    fb_th = integrate.fb_ref(school)
+#                    fb_th.start() 
+                schools.append(school)
+                
+                try:
+                    attendance = Attendance.objects.get(binding = binding, school = school)
+                except ObjectDoesNotExist:
+                    
+                    attendance = Attendance.objects.create(
                                 binding=binding,
                                 school=school,
-                                type=s.get('type', ''),
-                                attend_year=year
+
                         )
+                year = s.get('year', {}).get('name', '')
+                school_type = s.get('type', '')
+                attendance.type= school_type
+                attendance.finish_year=year
                 attendance.save()
+                
+            # Asynchronously update school information
+            thread1 = integrate.fb_update_school(schools)
+            thread1.start() 
                
-        if strategy.backend.__class__.__name__ == 'LinkedinOAuth2' and linkedin_binding.count() == 0:
+        if strategy.backend.__class__.__name__ == 'LinkedinOAuth2': 
             social_auth = UserSocialAuth.objects.get(user=user, provider=LINKEDIN_PROVIDER)
-            ## create binding
-            print "creating binding"
-            binding = Binding(user=user,
-                              bind_from=LINKEDIN_PROVIDER,
-                             )
-            binding.save()
+            linkedin_binding = Binding.objects.filter(user=user, bind_from=LINKEDIN_PROVIDER)
+            if linkedin_binding.count() == 0:
+                ## create binding
+                print "creating binding"
+                binding = Binding(user=user,
+                                  bind_from=LINKEDIN_PROVIDER,
+                                 )
+                binding.save()
 
-            ## create profile
-            print "creating profile"
-            profile = Profile(binding=binding,
-                             )
-            profile.save()
+                ## create profile
+                print "creating profile"
+                profile = Profile(binding=binding,
+                                 )
+                profile.save()
+            else:
+                assert( linkedin_binding.count() == 1 )
+                binding = linkedin_binding[0]
 
-            ## profile schools if they do not exist
+            ## Check schools
+            schools = []
             for s in response.get('educations', {}).get('values',[]):
 
                 name = s.get('schoolName')
@@ -109,23 +128,29 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                                 name=name,
                             )
                     school.save()
-                    print "School created: ", #name
-                    li_th = integrate.li_ref(school, binding)
-                    li_th.start()                     
+                    print "School created: ", #name                
                 else:
                     school = schools_by_name[0]
-                    li_th2 = integrate.li_ref(school, binding)
-                    li_th2.start() 
+#                    li_th2 = integrate.li_ref(school, binding)
+#                    li_th2.start() 
+                schools.append(school)
 
-                ### create Attendance entry
+                ### Check Attendance entry  
                 attend_year = s.get('startDate', {}).get('year', '')
                 finish_year = s.get('endDate', {}).get('year', '')
-
-                attendance = Attendance(
+                school_type = s.get('degree', '')
+                try:
+                    attendance = Attendance.objects.get(binding = binding, school = school)
+                except ObjectDoesNotExist:
+                    attendance = Attendance.objects.create(
                                 binding=binding,
                                 school=school,
-                                type=s.get('degree', ''),
+                                type= school_type,
                                 attend_year=attend_year,
                                 finish_year=finish_year
                         )
-                attendance.save()
+                    attendance.save()
+                
+            # Asynchronously update school information
+            thread2 = integrate.li_update_school(schools)
+            thread2.start()   
