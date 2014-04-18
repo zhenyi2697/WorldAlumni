@@ -113,5 +113,5 @@ class UserSetting(models.Model):
         verbose_name_plural = 'UserSettings'
 
     def __unicode__(self):
-        return self.binding.id + u" " + self.entry.name
+        return str(self.binding.id) + u" " + self.entry.name
 

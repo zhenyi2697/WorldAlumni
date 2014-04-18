@@ -2,7 +2,13 @@ from django.contrib import admin
 from models import *
 
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'sid', 'ref')
+    list_display = ('id', 'name', 'sid', 'ref', 'ref_id' )
+
+    def ref_id(self, obj):
+        if obj.ref:
+            return obj.ref.id
+        else:
+            return None
 
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ('id', 'binding', 'school', 'type', 'attend_year', 'finish_year')
