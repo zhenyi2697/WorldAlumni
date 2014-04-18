@@ -15,6 +15,9 @@ from social_auth.models import UserSocialAuth
 from backend.models import *
 from api.serializers import *
 
+DISTANCE_ONLY_ENTRY = 1
+INVISIBLE_ENTRY = 2
+
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders its content into JSON.
@@ -134,7 +137,7 @@ def pretty_date(time=False):
         return str(day_diff/30) + " months ago"
     return str(day_diff/365) + " years ago"
 
-def computeDistance(from_binding, to_binding):
+def computeDistance(from_binding, to_binding, distance_only=False):
 
     from_locations = Location.objects.filter(binding=from_binding).order_by('-create_time')
     to_locations = Location.objects.filter(binding=to_binding).order_by('-create_time')
@@ -152,7 +155,15 @@ def computeDistance(from_binding, to_binding):
         distance = "%.2fkm" % distance
         appear_time = pretty_date(to_loc.create_time)
 
-        return (distance, appear_time, to_loc.longitude, to_loc.latitude)
+
+        if distance_only:
+            longitude = '0'
+            latitude = '0'
+        else:
+            longitude = to_loc.longitude
+            latitude = to_loc.latitude
+
+        return (distance, appear_time, longitude, latitude)
 
     else:
         return ('no data', 'no data', '0', '0')
@@ -216,6 +227,19 @@ def find_associated_bindings(binding):
 
 def get_nearby_user_data(me, binding, ad):
 
+    ### if invisible setting is True, then just return None
+    if me.id != binding.id:
+        invisible = False
+        try:
+            invisible_setting = UserSetting.objects.get(binding=binding, entry=INVISIBLE_ENTRY)
+            if invisible_setting.value == 1:
+                invisible = True
+        except UserSetting.DoesNotExist:
+            pass
+
+        if invisible:
+            return None
+
     nearby_user = binding.user
 
     provider = binding.bind_from
@@ -231,7 +255,17 @@ def get_nearby_user_data(me, binding, ad):
         social_auth = auth_users[0]
 
     attendances = Attendance.objects.filter(binding=binding)
-    distance, appear_time, longitude, latitude = computeDistance(me, binding)
+
+    ### check if is distance_only == True
+    distance_only = False
+    try:
+        distance_only_setting = UserSetting.objects.get(binding=binding, entry=DISTANCE_ONLY_ENTRY)
+        if distance_only_setting.value == 1:
+            distance_only = True
+    except UserSetting.DoesNotExist:
+        pass
+
+    distance, appear_time, longitude, latitude = computeDistance(me, binding, distance_only)
 
     data = {
             'bindingId': str(binding.id),
@@ -283,8 +317,9 @@ def nearby_users(request):
         for bid, (binding, ad) in nearby_bindings.iteritems():
             if me.user.id != binding.user.id:
                 data = get_nearby_user_data(me, binding, ad)
-                users.append(data)
-                last_ad = ad
+                if data:
+                    users.append(data)
+                    last_ad = ad
 
         ### sort users by distance
         users.sort(key=lambda x: x['distance'])
