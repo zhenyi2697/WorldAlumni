@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
-
+import urllib2
+import json
 from social_auth.models import UserSocialAuth
 from django.core.exceptions import ObjectDoesNotExist
 from backend.models import *
@@ -41,6 +42,7 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                 print "creating binding"
                 binding = Binding(user=user,
                                   bind_from='facebook',
+                                  
                                  )
                 binding.save()
 
@@ -48,6 +50,8 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
                 print "creating profile"
                 profile = Profile(binding=binding,
                                   gender=response.get('gender', 'male'),
+                                    #image_url= 'http://graph.facebook.com/{user_id}/picture'.format()
+
                                  )
                 profile.save()
             else:
@@ -100,6 +104,9 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
         if strategy.backend.__class__.__name__ == 'LinkedinOAuth2': 
             social_auth = UserSocialAuth.objects.get(user=user, provider=LINKEDIN_PROVIDER)
             linkedin_binding = Binding.objects.filter(user=user, bind_from=LINKEDIN_PROVIDER)
+            # linkedin extra data
+
+
             if linkedin_binding.count() == 0:
                 ## create binding
                 print "creating binding"
@@ -110,7 +117,13 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
 
                 ## create profile
                 print "creating profile"
+                try:
+                    pictureUrl = response['pictureUrl']
+                except KeyError:
+                    pictureUrl = None
+                        
                 profile = Profile(binding=binding,
+                                  image_url= pictureUrl
                                  )
                 profile.save()
             else:

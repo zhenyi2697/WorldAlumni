@@ -162,7 +162,11 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '75x734l3w3d01o'
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'hIVmjmq31A54CAiK'
 # Add email to requested authorizations.
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress', 'r_fullprofile']
-SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['email-address', 'headline', 'industry', 'educations']
+SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ['email-address', 'educations', 'picture-url']#, 'headline', 'industry', ]
+#SOCIAL_AUTH_LINKEDIN_EXTRA_DATA  = [ ('public-profile-url', 'public_profile_url'),  ('picture-url', 'picture_url') ] 
+#LINKEDIN_EXTRA_FIELD_SELECTORS = ['email-address','positions', 'headline','summary','picture-url','site-standard-profile-request','public-profile-url','location','interests','skills','languages',]
+
+#LINKEDIN_EXTRA_DATA = [('id', 'id'), ('first-name', 'first_name'), ('last-name', 'last_name'), ('email-address', 'email_address'), ('positions', 'positions'), ('summary', 'summary'), ('headline', 'headline'), ('picture-url', 'picture_url'),('site-standard-profile-request', 'site_standard_profile_request'), ('public-profile-url', 'public_profile_url'), ('location', 'location'), ('interests', 'interests'), ('skills', 'skills'), ('languages', 'languages'),]
 
 #SOCIAL_AUTH_USER_MODEL = 'backend.models.User'
 
