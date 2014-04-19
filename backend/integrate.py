@@ -22,7 +22,7 @@ def get_main_node_id(id):
     node = get_node(id)
     content = urllib2.urlopen(node['link']).read()
     # Use regular expression to locate redirect link
-    pattern = r'window.location.replace\(\"(?P<redirect_link>.{1,100}?)\"\);\<\/script\>' # script to 'redirect' merged page
+    pattern = r'window.location.replace\(\"(?P<redirect_link>.+?)\"\);\<\/script\>' # script to 'redirect' merged page
     m = re.search(pattern, content)
     
     if m==None:
@@ -34,7 +34,7 @@ def get_main_node_id(id):
         if False:
             print 'Mateched location.replace script: ', m.group(0)
             print 'Redirect page link: ', redirect_link
-        pattern2 = r'\\\/(?P<node_name>[^\/]{1,100}?)\?rf'
+        pattern2 = r'\\\/(?P<node_name>[^\/]+?)\?rf'
         m2 = re.search(pattern2, redirect_link)
         node_name =  m2.group('node_name')
 
