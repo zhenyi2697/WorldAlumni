@@ -61,6 +61,7 @@ class UserSettingSerializer(serializers.Serializer):
 class UserNearbySerializer(serializers.Serializer):
     bindingId = serializers.CharField(max_length=200)
     uid = serializers.CharField(max_length=200)
+    image_url = serializers.CharField(max_length=500,required=False)
     first_name = serializers.CharField(max_length=200)
     last_name = serializers.CharField(max_length=200)
     provider = serializers.CharField(max_length=200)

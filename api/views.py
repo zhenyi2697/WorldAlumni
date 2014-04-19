@@ -237,6 +237,11 @@ def get_nearby_user_data(me, binding, ad):
 
     provider = binding.bind_from
     auth_users = UserSocialAuth.objects.filter(user=nearby_user)
+    try:
+        profile = Profile.objects.get(binding=binding)
+    except Profile.DoesNotExist:
+        profile = None
+
 
     ### if have more than one binding, determine which one is the right good one
     if len(auth_users) > 1:
@@ -246,6 +251,12 @@ def get_nearby_user_data(me, binding, ad):
             social_auth = auth_users[1]
     else:
         social_auth = auth_users[0]
+
+    if provider == 'facebook':
+        image_url = 'http://graph.facebook.com/'+ social_auth.uid+'/picture'
+    else:
+        if profile:
+            image_url = profile.image_url
 
     attendances = Attendance.objects.filter(binding=binding)
 
@@ -257,6 +268,7 @@ def get_nearby_user_data(me, binding, ad):
     data = {
             'bindingId': str(binding.id),
             'uid': str(social_auth.uid),
+            'image_url': image_url,
             'first_name': nearby_user.first_name,
             'last_name': nearby_user.last_name,
             'provider': social_auth.provider,
