@@ -14,9 +14,13 @@
     loadErrorMessage("Sorry, Geolocation is not supported by your browser, maybe you could consider using a more advanced one ;)");
   }
 
+  var current_latitude;
+  var current_longitude;
   function showLocation(location) {
-      $("#latitude").html(location.coords.latitude);
-      $("#longitude").html(location.coords.longitude);
+      current_latitude = location.coords.latitude;
+      current_longitude = location.coords.longitude;
+      $("#latitude").html(current_latitude);
+      $("#longitude").html(current_longitude);
 
       $("#current-location").show();
       $(".find-friend-div").show();
@@ -61,7 +65,7 @@
     }else {
       $("#friend-map").slideDown(function(){
         if (!mapInitiated) {
-          $("#friend-map").gmap3();
+          initMap();
           mapInitiated = true;
           refreshMap();
         }
@@ -92,9 +96,9 @@
       f = friends[i];
       row_data = "<tr>";
       if (f.provider == 'facebook') {
-        row_data += "<td><img src='"+ f.image_url +"?width=40&height=40' alt='"+f.first_name+"' class='img-circle friend-thumbnail'/></td>";
+        row_data += "<td><img src='"+ f.image_url +"?width=40&height=40' style='width:24px;height:24px;' alt='"+f.first_name+"' class='img-circle friend-thumbnail'/></td>";
         row_data += "<td><a href='http://www.facebook.com/"+ f.uid  +"' target='_blank'>"+ f.first_name + " "+ f.last_name +"</a></td>";
-        context_data = "<img src='"+ f.image_url +"?width=24&height=24' class='img-circle friend-thumbnail' style='margin-right:5px;'/><a href='http://www.facebook.com/"+ f.uid  +"' target='_blank'>" + f.first_name + " " + f.last_name + "</a>";
+        context_data = "<img src='"+ f.image_url +"?width=24&height=24' style='width:24px;height:24px;margin-right:5px;' class='img-circle friend-thumbnail' style='margin-right:5px;'/><a href='http://www.facebook.com/"+ f.uid  +"' target='_blank'>" + f.first_name + " " + f.last_name + "</a>";
       } else {
         row_data += "<td><img src='"+ f.image_url + "' style='width:40px;height:40px;' class='img-circle friend-thumbnail' /></td>";
         row_data += "<td>"+ f.first_name + " "+ f.last_name +"</td>";
@@ -133,6 +137,17 @@
 
   }
 
+  var initMap = function(){
+    $("#friend-map").gmap3({
+	    map:{
+	      options:{
+	        center:[current_latitude, current_longitude],
+	        zoom:12
+	      }
+	    }
+    });
+  }
+
   var refreshMap = function(){
 
     // clear old markers
@@ -166,15 +181,13 @@
     });
   
   }
-
+  
   var user_nearby = function(){
-    var latitude =  $("#latitude").html();
-    var longitude =  $("#longitude").html();
 
     post_params = {
       'bindingId': bindingId,
-      'longitude': longitude,
-      'latitude': latitude
+      'longitude': current_longitude,
+      'latitude': current_latitude
     }
 
     $.post('/api/nearby_users/', post_params).done(function(d){
