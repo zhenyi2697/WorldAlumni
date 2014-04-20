@@ -96,7 +96,7 @@
       f = friends[i];
       row_data = "<tr>";
       if (f.provider == 'facebook') {
-        row_data += "<td><img src='"+ f.image_url +"?width=40&height=40' style='width:24px;height:24px;' alt='"+f.first_name+"' class='img-circle friend-thumbnail'/></td>";
+        row_data += "<td><img src='"+ f.image_url +"?width=40&height=40' style='width:40px;height:40px;' alt='"+f.first_name+"' class='img-circle friend-thumbnail'/></td>";
         row_data += "<td><a href='http://www.facebook.com/"+ f.uid  +"' target='_blank'>"+ f.first_name + " "+ f.last_name +"</a></td>";
         context_data = "<img src='"+ f.image_url +"?width=24&height=24' style='width:24px;height:24px;margin-right:5px;' class='img-circle friend-thumbnail' style='margin-right:5px;'/><a href='http://www.facebook.com/"+ f.uid  +"' target='_blank'>" + f.first_name + " " + f.last_name + "</a>";
       } else {
