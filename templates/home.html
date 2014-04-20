@@ -238,11 +238,12 @@
                                   <td> 23 hours ago </td>
                                 </tr-->
                               </table>
+                            <div class="col-md-12" style="height:400px;display:none;" id="friend-map"></div>
                             </div>
                           </div>
                       </div>
                     {% else %}
-                      <div class="col-sm-12"> 
+                      <div class="col-sm-12">
                           <p class="text-large section-color-2">
                             Please log in to find your friends
                           </p>
@@ -372,6 +373,7 @@
         <script src="{{STATIC_URL}}js/jquery-2.0.3.js"></script>
         <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
         <script src="{{STATIC_URL}}js/smoothscroll.js"></script>
+        <script src="{{STATIC_URL}}js/gmap3.min.js"></script>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
 
@@ -394,6 +396,10 @@
           var bindingId = {{bindingId}};
         </script>
         <script src="{{STATIC_URL}}js/query.js"></script>
+        <script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en" type="text/javascript"></script>
+        <script>
+          //$("#friend-map").gmap3();
+        </script>
         {% endif %}
 
         <!-- End Scripts Section -->
