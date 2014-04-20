@@ -68,7 +68,7 @@ class fb_update_school(threading.Thread):
         sch_node = get_node(school.sid)
         for sug_school in suggestions:
             sug_node = get_node( sug_school.sid )
-            if sug_node['likes'] > 2* sch_node['likes']:
+            if sug_node['likes'] >=  sch_node['likes']:
                 school.ref = sug_school.ref
         return school
     def update_school(self, school): 
@@ -139,7 +139,7 @@ class li_update_school(threading.Thread):
         return self.school
                 
         
-def bind_school_fb(sid):
+def bind_school_fb(sid):    #deprecated
     
     print 'bind_school_fb called'
     
