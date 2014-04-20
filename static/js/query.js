@@ -1,9 +1,54 @@
-  navigator.geolocation.getCurrentPosition(GetLocation);
+/*
+ * Query user's locatio and nearby schoolmates
+ *
+ * copyright zhenyi2697
+ * Updated 04/20/2014
+ *
+*/
 
-  function GetLocation(location) {
+
+  // use html 5 to load location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showLocation, showLocationError);
+  } else {
+    loadErrorMessage("Sorry, Geolocation is not supported by your browser, maybe you could consider using a more advanced one ;)");
+  }
+
+  function showLocation(location) {
       $("#latitude").html(location.coords.latitude);
       $("#longitude").html(location.coords.longitude);
+
+      $("#current-location").show();
       $(".find-friend-div").show();
+      $("#location-error-message").hide();
+      $("#loading-message").hide();
+  }
+
+  function loadErrorMessage(message) {
+    $("#location-error-message").html(message);
+    $("#location-error-message").show();
+  }
+
+  function showLocationError(error) {
+
+    var message = ""
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        message = "Sorry, we cannot give your nearby friends without knowing your location -_- ...";
+        break;
+      case error.POSITION_UNAVAILABLE:
+        message = "Sorry, we cannot get your current location, try refresh the page ;)";
+        break;
+      case error.TIMEOUT:
+        message = "Location request timedout, retry please ;)";
+        break;
+      case error.UNKNOWN_ERROR:
+        message = "Somethings wierd happens, refresh page please ;)"
+        break;
+    }
+    loadErrorMessage(message);
+    $("#current-location").hide();
+    $("#loading-message").hide();
   }
 
   var load_friends = function(friends){
@@ -11,6 +56,12 @@
     var rows = [];
     var row_data = "";
     var f;
+
+    if (friends.length <= 1) {
+      $("#friend-message").html("It seems that you are the only one around here, come back later!");
+    } else {
+      $("#friend-message").html("We have found "+ (friends.length - 1) +" schoolmates for you");
+    }
 
     for (var i = 0; i < friends.length; i++) {
       f = friends[i];

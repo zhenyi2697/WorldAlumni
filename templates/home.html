@@ -89,9 +89,14 @@
 
                 {%  if user.is_authenticated %}
                     <div class="row text-center">
-                      <p class="text-large" > Welcom back, {{user.username}} !
+                      <p class="text-large" > Welcom back, {{user.first_name}} {{user.last_name}} !
                         <br/>
-                        <span class="text-medium">Your current coordinate is: <span id="latitude"></span>, <span id="longitude"></span></span>
+
+                        <br/>
+                        <span class="text-medium" id="current-location" style="display:none;">Your current coordinate is: <span id="latitude"></span>, <span id="longitude"></span></span>
+                        <span id="loading-message"> <i class="fa fa-spinner fa-spin"></i> We are trying hard to load your current location</span>
+                        <span id="location-error-message" style="display:none;"></span>
+
                         <div style="margin-top:-20px;display:none;" class="find-friend-div">
                           <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();">Find nearby friends</a>
                           </br>
@@ -214,13 +219,14 @@
                     {% if user.is_authenticated %}
                       <div class="col-sm-12"> 
                           <p class="text-large section-color-2">
-                              Here is the list of your nearby schoolmates
-                              </br>
-                              <div style="margin-top:-20px;display:none;" class="find-friend-div">
+                              <div style="margin-top:-60px;display:none;" class="find-friend-div">
                                 <a class="btn btn-danger findFriendButton" href="#friends" onclick="user_nearby();">Find nearby friends</a>
                                 </br>
                               </div>
+                              </br>
+                              <p><span class="text-large" id="friend-message"></span></p>
                           </p>
+                          </br>
                           <div class="row">
                             <div class="col-md-10 col-md-offset-1">
                               <table id="friend-table" class="table table-striped table-responsive">
@@ -372,8 +378,6 @@
             if (window.location.hash && window.location.hash == '#_=_') {
                     window.location.hash = '';
             }
-
-            google.load("search", "1");
 
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
