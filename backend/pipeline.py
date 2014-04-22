@@ -25,8 +25,8 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
     print "User is: %s", user
     print "Details: %s", details
     print "Response is: %s", response
-    for s in response.get('educations', {}).get('values',[]):
-        print '  ', s, ' '
+#    for s in response.get('educations', {}).get('values',[]):
+#        print '  ', s, ' '
         
     if user:
         print "is user == True"
@@ -48,9 +48,10 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
 
                 ## create profile
                 print "creating profile"
+                uid = response.get('id', None)
                 profile = Profile(binding=binding,
                                   gender=response.get('gender', 'male'),
-                                    #image_url= 'http://graph.facebook.com/{user_id}/picture'.format()
+                                  image_url= 'http://graph.facebook.com/{}/picture'.format(uid)
 
                                  )
                 profile.save()
@@ -117,11 +118,7 @@ def user_details(strategy, details, response, user=None, *args, **kwargs):
 
                 ## create profile
                 print "creating profile"
-                try:
-                    pictureUrl = response['pictureUrl']
-                except KeyError:
-                    pictureUrl = None
-                        
+                pictureUrl = response.get('pictureUrl', None)
                 profile = Profile(binding=binding,
                                   image_url= pictureUrl
                                  )
